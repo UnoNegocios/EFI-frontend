@@ -201,7 +201,6 @@ export default {
                 var items = []
                 var total = 0
                 var link = ''
-                console.log(this.company)
                 if(this.company!=undefined){
                     link = link + 'filter[company_id]='+this.company+'&'
                 }
@@ -347,7 +346,6 @@ export default {
             this.$store.dispatch('calendar/getCalendars')
         },
         closeCreateDialogCalendar: function(params) {
-            console.log(params)
             if(params!=false){
             this.calendars.push(this.mapCalendars([params])[0])
             }

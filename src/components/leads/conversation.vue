@@ -181,16 +181,13 @@ export default {
         this.scroll
     },
     beforeUpdate(){
-        console.log('perro')
             if(this.propData.lead!=undefined && this.pause=='no'){
-                console.log('raton')
                 this.lead = this.propData.lead
                 this.funnel_phases = this.propData.funnel_phases
                 this.messages.push(this.propData.lead.conversation.latest_message)
                 this.scroll
                 this.pause='si'
             }else if(this.propData.lead==undefined){
-                console.log('pez')
                 this.tab=null,
                 this.messages=[],
                 this.asociarDialog=false,
@@ -222,7 +219,6 @@ export default {
                         audio.appendChild(mainaudio);
                         var url = URL.createObjectURL(new Blob(this.chunks, { type: "audio/wav" }))
                         mainaudio.innerHTML = '<source src="' + url.slice(5,url.length) + '" type="audio/wav" />';
-                        console.log(url.slice(5,url.length))
                         this.chunks = [];
                         this.blobObj = null;
                     }
@@ -231,7 +227,6 @@ export default {
             });
         },
         stop() {
-            console.log(this.recorder)
             this.recording = false
             // stop
             this.recorder.stop();

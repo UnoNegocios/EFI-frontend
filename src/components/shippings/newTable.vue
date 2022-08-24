@@ -336,7 +336,6 @@ export default {
                         route:id.route
                     }
                 })
-                console.log(records)
                 var sum = {
                     route:0,
                     weight:0

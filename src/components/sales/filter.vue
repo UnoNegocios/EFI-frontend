@@ -244,7 +244,6 @@ export default {
             }
         },
         filter(){
-            console.log(this.quotation)
             var count = 0
             var filter = ''
             //abierto

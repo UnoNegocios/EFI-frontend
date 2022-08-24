@@ -309,7 +309,6 @@ export default {
             }
         },
         filtersProviderPayment: function(params) {
-            console.log(params)
             this.provider_payments = ''
             var filterProviderPayment = this.$store.state.provider_payment.provider_payments
             

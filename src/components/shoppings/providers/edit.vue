@@ -61,9 +61,7 @@ export default {
             })
         },
         save () {
-            console.log(this.editedItem)
             axios.patch(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/providers/" + this.editedItem.id,this.editedItem).then(response=>{
-                console.log('hola')
                 this.close()
             }).catch(error => {
                 this.snackbar = {

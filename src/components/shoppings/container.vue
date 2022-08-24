@@ -232,7 +232,6 @@ export default {
             { value: 'actions', sortable: false, align: 'end', },
         ]},
         shoppingsLists(){
-            console.log(this.$route.params.id)
             var shoppingsList = this.$store.state.shopping.shoppings
             if(this.$route.params.id!=undefined){
                 shoppingsList = shoppingsList.filter(shopping=>shopping.id == this.$route.params.id)

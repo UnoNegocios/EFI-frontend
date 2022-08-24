@@ -613,14 +613,12 @@ export default {
     },
     mounted(){
         Echo.channel('sales').listen('OrderInProduction', (e) => {
-            console.log(e)
             var updatedSale = this.sales.filter(sale=>sale.id == e[0])[0]
             if(updatedSale!=undefined){
                 this.sales.filter(sale=>sale.id == e)[0].is_in_production = true
             }
         })
         Echo.channel('sales_dispatched').listen('OrderDispatched', (e) => {
-            console.log(e)
             var updatedSale = this.sales.filter(sale=>sale.id == e[0])[0]
             if(updatedSale!=undefined){
                 this.sales.filter(sale=>sale.id == e)[0].production_dispatched = true
@@ -720,7 +718,6 @@ export default {
         addProduct(quotation_id){
             this.addDialogDetail = true
             this.addDetail = quotation_id*1
-            console.log(this.addDetail)
         },
         rejectionSwitchLabel(value){
             if(value == null || value){
@@ -1087,7 +1084,6 @@ export default {
         },
         editItem(id){
             axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/sales?filter[id]=" + id).then(response => {
-                console.log(response)
                 this.sale = response.data.data.map(id=>{
                     return{
                         id:id.id,
@@ -1105,7 +1101,6 @@ export default {
                         status:'vendido'
                     }
                 })[0]
-                console.log(this.sale)
                 this.editDialog = true
             })
         },

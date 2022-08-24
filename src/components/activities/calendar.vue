@@ -212,7 +212,6 @@
     watch:{
       currentUser:{
         handler(){
-          console.log('hola')
           var start = this.start
           var end = this.end
           this.updateRange({ start, end })
@@ -273,7 +272,6 @@
         nativeEvent.stopPropagation()
       },
       updateRange ({ start, end }) {
-        console.log(this.currentUser)
         this.start = start.date
         this.end = end.date
         var link = process.env.VUE_APP_BACKEND_ROUTE + "api/v2/calendars?filter[date_between]=" + this.start + ',' + this.end

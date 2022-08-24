@@ -256,7 +256,6 @@ import CreateCompany from "../clients/companies/create"
             }   
         },
         created(){
-            console.log(this.company)
             if(this.company!=undefined){
                 this.calendar.company_id=this.company
             }

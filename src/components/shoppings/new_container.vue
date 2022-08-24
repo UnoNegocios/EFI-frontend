@@ -320,7 +320,6 @@ export default {
                 })
             },
             mapShoppings(shoppings){
-                console.log(shoppings)
                 return shoppings.map(id=>{
                     return{
                         id:id.id,

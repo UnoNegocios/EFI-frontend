@@ -257,7 +257,6 @@ import axios from "axios";
         },
     },
     created(){
-        console.log(this.client)
         this.$store.dispatch('currentUser/getUser')
         this.$store.dispatch('user/getUsers')
         this.$store.dispatch('origin/getOrigins')

@@ -66,10 +66,6 @@ export default {
         localStorage.removeItem("printShipping");
         axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/sales?filter[id]=" + this.shipping.details.map(sale=>sale.sale.id)).then(response => {
             this.sales = response.data.data
-            console.log(this.sales)
-            console.log(this.sales[0].company.attributes.name)
-            console.log(this.sales[0].items[0].item.unit.name)
-            console.log(this.sales[0].items[0].item.name)
         })
     },
     methods:{

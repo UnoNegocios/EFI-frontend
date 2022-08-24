@@ -126,7 +126,6 @@ export default {
         'createActivity':createActivity
     }, 
     created(){
-        console.log(this.lead)
     },
     data(){
         return{
@@ -146,7 +145,6 @@ export default {
     },
     methods:{
         pendiente(date){
-            console.log(date+' > '+this.today)
             if(date>this.today){
                 return true
             }else{

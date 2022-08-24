@@ -307,7 +307,6 @@ export default {
             this.conversation_dialog = params
         },
         changeFunnelPhaseOrder: function (evt) {
-            console.log(evt)
         },
         changeLeadOfFunnelPhase: function (evt) {
             if(evt.from._prevClass!=evt.to._prevClass){

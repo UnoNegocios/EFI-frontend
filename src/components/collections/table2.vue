@@ -77,7 +77,7 @@
                     </v-btn>
                     </template>
                     <v-list style="font-size:13px;">
-                        <v-list-item @click="editItem(item.id)"  v-show="permissions('editCollections')">
+                        <v-list-item @click="editItem(item.editedItem)"  v-show="permissions('editCollections')">
                             <v-icon small class="mr-2">
                                 mdi-pencil
                             </v-icon>
@@ -355,14 +355,15 @@ export default {
                     created_at:id.created_at.slice(0, 18),
                     updated_at:id.updated_at.slice(0, 18),
                     details: id.details,
-                    payment_complement: id.payment_complement
+                    payment_complement: id.payment_complement,
+                    editedItem:id
                 }
             });
             return collections
         },
         extiste(item){
             if(item!=undefined){
-                return item.id
+                return item.id*1
             }
         },
         saleName(details, remission, invoice){
@@ -536,8 +537,28 @@ export default {
             this.deleteId = item.id
             this.sheet = true
         },
-        editItem(id){
-            this.collection = this.collectionsList.filter(collection=>collection.id == id)[0]
+        editItem(editedItem){
+            this.collection = [editedItem].map(id=>{
+                return{
+                    id:id.id,
+                    company_id:this.extiste(id.company),
+                    salesID:id.details,
+                    macro:id.macro,
+                    date:id.date,
+                    invoice:this.invoice(id.details, id.invoice),
+                    remission:this.remission(id.details, id.remission),
+                    methods:[{
+                        method:this.extiste(id.payment_method),
+                        amount:id.payments.amount
+                    }],
+                    amount:id.amount,
+                    note:id.note,
+                    pdf:id.pdf,
+                    user_id:this.extiste(id.user),
+                    serie:id.serie,
+                    payment_method_id:this.extiste(id.payment_method)
+                }
+            })[0]
             this.editDialog = true
         },
     }

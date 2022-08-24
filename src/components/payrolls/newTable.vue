@@ -236,7 +236,6 @@ export default {
                     link = link + JSON.parse(localStorage.getItem('filtersPayroll'))+'&'
                 }
                 if(sortBy.length === 1){
-                    console.log(sortDesc)
                     if(sortDesc[0]){
                         link = link + "sort=-" + sortBy[0] + '&'
                     }else{
@@ -269,7 +268,7 @@ export default {
                     absence:((id.absence*1)*1),   
                     sum : (((id.extra_time*1)+(id.production_award*1)+(id.punctuality_award*1)+(id.performance_award*1)+(id.prima_vacacional*1)+(id.holidays*1))*1), 
                     rest: (((id.absence*1)+(id.infonavit*1)+(id.imss*1)+(id.loan*1))*1),            
-                    daily_salary:((id.amount/30)*1),
+                    daily_salary:((id.amount/15)*1),
                     amount:((id.amount*1)*1),
                     total: ((id.amount+((id.extra_time*1)+(id.production_award*1)+(id.punctuality_award*1)+(id.performance_award*1)+(id.prima_vacacional*1)+(id.holidays*1))-((id.absence*1)+(id.infonavit*1)+(id.imss*1)+(id.loan*1)))*1),
                     job_position:id.user.job_position,

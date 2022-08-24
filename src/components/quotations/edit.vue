@@ -161,10 +161,8 @@ import axios from "axios";
         todaviano(){
             if(this.quotation.company_id!=null&&this.quotation.user_id!=null&&this.quotation.type!=''){
                 if(this.quole=='Venta'&&this.quotation.date!=''){
-                    console.log(this.quotation.date)
                     return false
                 }else if(this.quole=='Cotización'&&this.quotation.due_date!=''){
-                    console.log(this.quotation.due_date)
                     return false
                 }else{
                     return true

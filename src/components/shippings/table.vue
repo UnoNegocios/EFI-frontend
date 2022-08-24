@@ -481,7 +481,6 @@ export default {
                 filterShipping=filterShipping.filter(shipping=>this.lowerCase(shipping.note).includes(params.note.toLowerCase()))
             }
 
-            console.log(params)
             /* Fecha */
             if(params.dateFrom!='' && params.dateFrom!=null && params.dateFrom!=undefined){
                 filterShipping=filterShipping.filter(shipping=>new Date(shipping.date) > new Date(params.dateFrom))

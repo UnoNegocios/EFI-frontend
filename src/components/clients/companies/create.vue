@@ -307,7 +307,6 @@ import axios from "axios";
             this.$store.dispatch('frequency/getFrequencies')
             this.$store.dispatch('cfdi/getCfdi')
             this.$store.dispatch('category/getCategories')
-            console.log(this.companyFromLead)
             if(this.companyFromLead!=undefined){
                 this.company.name = this.companyFromLead.name
                 this.company.origin_id = this.companyFromLead.origin_id

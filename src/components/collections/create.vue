@@ -260,7 +260,6 @@
             fecha(){
                 if(this.factura=='invoice'){
                     var perro = { 'text': 'Fecha de Facturación', 'value': 'invoice_date' }
-                    console.log(perro)
                     return perro
                 }else{
                     return ''
@@ -529,7 +528,6 @@
                 }
                 this.gris = true
                 this.$nextTick(() => {
-                    console.log(Object.assign(this.collection))
                     
                     axios.post(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/collection/create",Object.assign(this.collection)).then(response=>{
                         this.close()

@@ -951,7 +951,7 @@ import Felix from "../components/orders/container"
       this.$store.dispatch('inventory/getInventories')
       
       this.$store.dispatch('collection/getCollectionDetails')
-      this.$store.dispatch('collection/getCollections')
+      //this.$store.dispatch('collection/getCollections')
       this.$store.dispatch('raw_material/getRawMaterial')
     },
     components:{ 

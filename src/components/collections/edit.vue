@@ -18,18 +18,18 @@
         <v-divider></v-divider>
 
 
-         <v-stepper v-model="e1" class="elevation-0">
+          <v-stepper v-model="e1" class="elevation-0">
             <v-stepper-header class="elevation-0">
                 <v-stepper-step style="font-weight:bolder!important;" :complete="e1 > 1" step="1"></v-stepper-step>
                 <v-divider></v-divider>
                 <v-stepper-step style="font-weight:bolder!important;" step="2"></v-stepper-step>
             </v-stepper-header>
             <v-stepper-items>
-                <v-stepper-content step="1" class="pt-0">
+                <v-stepper-content step="1" class="py-0">
                     <v-card-text class="pb-0 pt-0">
                         <v-container class="pt-0">
                             <v-row >
-                                <v-col cols="12" sm="6" md="6" class="pt-0">
+                                <v-col cols="12" sm="6" md="6" class="pb-0">
                                     
                                     <v-autocomplete item-text="detail" clearable v-model="collection.company_id" :items="companyLists" label="Cliente" item-value="id">
                                         <template slot="no-data"><div class="px-4 py-1">No existen clientes relacionados.</div></template>                  
@@ -74,7 +74,7 @@
                                     </v-radio-group>
 
                                 </v-col>
-                                <v-col cols="12" sm="6" md="6" class="pt-0">
+                                <v-col cols="12" sm="6" md="6" class="pb-0">
                                     <v-menu v-model="datePicker" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px" >
                                         <template v-slot:activator="{ on }">
                                             <v-text-field :rules="[v => !!v || 'Campo requerido']" clearable required v-model="collection.date" label="Fecha de Pago" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
@@ -148,7 +148,7 @@
                         Siguiente
                         <v-icon v-if="!isMobile()">mdi-chevron-right</v-icon>
                     </v-btn>
-                    <v-btn color="blue darken-1" text @click="save" :loading="gris" :disabled="gris || grey || seleccionado">
+                    <v-btn color="blue darken-1" text @click="save" :loading="gris" :disabled="gris || grey || (seleccionado&&this.selected.length<1)">
                         Guardar
                     </v-btn>
                 </v-card-actions>
@@ -213,12 +213,10 @@
                 }else if(this.factura == 'remission'){
                     this.collection.invoice = ''
                 }
-                if(this.collection.company_id!=''){
-                    this.salesLists2()
-                }
-                return 'Nueva Cobranza'
+                return 'Editar Cobranza'
             },
             gastado(){
+                var gastado = 0
                 if(this.renderComponent == true){
                     var gastado = 0
                     if(this.selected.length>0){
@@ -226,13 +224,12 @@
                             gastado = gastado + this.selected[i].amount
                         }
                     }
-                    return gastado
+                    
                 }
+                return gastado
             },
             grey(){
-
-                var url = process.env.VUE_APP_BACKEND_ROUTE + 'api/v1/'
-                if(url.includes('suministros.uno')){
+                if(process.env.VUE_APP_BACKEND_ROUTE == "https://suministros.uno/"){
                     if( this.collection.company_id==''||
                         this.collection.company_id==null||
                         this.collection.company_id==undefined ||
@@ -254,13 +251,8 @@
                 }
             },
             seleccionado(){
-                var url = process.env.VUE_APP_BACKEND_ROUTE + 'api/v1/'
-                if(url.includes('suministros.uno')){
-                    if(this.selected.length<1){
-                        return true
-                    }else{
-                        return false
-                    }
+                if(process.env.VUE_APP_BACKEND_ROUTE == "https://suministros.uno/"){
+                    return true
                 }else{
                     return false
                 }
@@ -289,11 +281,42 @@
             },
             
         },
+        watch:{
+            collection:{
+                handler(){
+                    this.collections = []
+                    this.index = 0
+                    this.salesLists2().then(response=>{
+                        for(var i=0; i<this.collection.salesID.length; i++){
+                            this.add(this.salesLists.filter(sale=>sale.id == this.collection.salesID[i].sale.id)[0])
+                        }
+                    })
+                    if(process.env.VUE_APP_BACKEND_ROUTE == "https://suministros.uno/"){
+                        if(this.collection.invoice!=null){
+                            this.factura = 'invoice'
+                        }else if(this.collection.remission!=null){
+                            this.factura = 'remission'
+                        }
+                    }
+                }, deep:true
+            }
+        },
         created(){
             if(this.company!=undefined){
                 this.collection.company_id=Number(this.company)
             }  
-            this.selected = this.collection.salesID
+            this.salesLists2().then(response=>{
+                for(var i=0; i<this.collection.salesID.length; i++){
+                    this.add(this.salesLists.filter(sale=>sale.id == this.collection.salesID[i].sale.id)[0])
+                }
+            })
+            if(process.env.VUE_APP_BACKEND_ROUTE == "https://suministros.uno/"){
+                if(this.collection.invoice!=null){
+                    this.factura = 'invoice'
+                }else if(this.collection.remission!=null){
+                    this.factura = 'remission'
+                }
+            }
             this.index = this.selected.length
             if(this.collection.invoice!=''&&this.collection.invoice!=null&&this.collection.invoice!=undefined){
                 this.factura = 'invoice'
@@ -303,20 +326,25 @@
         },
         methods: {
             salesLists2(){
-                axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/company/quotations", {params:{id:this.collection.company_id}})
-                .then((res) => {
-                    this.esperaLaInfo = true
-                    this.salesLists = res.data.data.filter(sale=>this.due(sale.id, sale.total) > 0).map(id=>{
-                        return{
-                            id:id.id,
-                            total:id.total,//.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',}),
-                            invoice:id.invoice,
-                            due:this.due(id.id, id.total),//.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',}),
-                            newDue:this.newDue(id.id, id.total),
-                            invoice_date:id.invoice_date,
-                            //payment: (id.total-this.due(id.id, id.total)).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})
-                        }
-                    });
+                return new Promise((resolve, reject) => {
+                    axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/company/quotations", {params:{id:this.collection.company_id}})
+                    .then((res) => {
+                        this.esperaLaInfo = true
+                        this.salesLists = res.data.data
+                        .filter(sale=>this.due(sale.id, sale.total) > 0 || this.collection.salesID.filter(csale=>csale.sale.id == sale.id).length > 0)
+                        .map(id=>{
+                            return{
+                                id:id.id,
+                                total:id.total,//.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',}),
+                                invoice:id.invoice,
+                                due:this.due(id.id, id.total),//.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',}),
+                                newDue:this.newDue(id.id, id.total),
+                                invoice_date:id.invoice_date,
+                                //payment: (id.total-this.due(id.id, id.total)).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})
+                            }
+                        });
+                        resolve('listo')
+                    })
                 })
             },
             isMobile() {
@@ -465,9 +493,11 @@
             },
             save(){
                 if(this.factura == 'invoice'){
+                    this.collection.serie = 'Serie A'
                     this.collection.remission = ''
                 }
                 if(this.factura == 'remission'){
+                    this.collection.serie = 'Serie B'
                     this.collection.invoice = ''
                 }
                 this.collection.methods[0].amount = this.collection.amount
@@ -476,7 +506,7 @@
                 this.collection.last_updated_by_user_id = this.currentUser.id
                 this.gris = true
                 this.$nextTick(() => {
-                    axios.put(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/collection/update",Object.assign(this.collection)).then(response=>{
+                    axios.patch(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/collections/" + this.collection.id,Object.assign(this.collection)).then(response=>{
                         this.close()
                     }).catch(error => {
                         this.snackbar = {

@@ -42,7 +42,6 @@ export default {
     computed:{
         totals(){
             var perro = this.$store.state.collection.totals
-            console.log(perro)
             return perro
         },
         loading(){

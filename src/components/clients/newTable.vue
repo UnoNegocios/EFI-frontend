@@ -183,7 +183,6 @@ export default {
                     link = link + JSON.parse(localStorage.getItem('filtersClient'))+'&'
                 }
                 if(sortBy.length === 1){
-                    console.log(sortDesc)
                     if(sortDesc[0]){
                         link = link + "sort=-" + sortBy[0] + '&'
                     }else{

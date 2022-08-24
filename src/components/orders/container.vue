@@ -263,7 +263,6 @@ export default {
                     created_by_user_id:id.created_by_user_id.id,
                 }
             })[0]
-            console.log(order)
             this.$nextTick(() => {
                 axios.post(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/orders/dispatch_sale_order", order).then(response=>{
                     this.sheet2 = false
