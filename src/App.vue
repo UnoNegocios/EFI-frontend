@@ -19,6 +19,12 @@
       <app v-if="token!=null"></app>
       <login v-else></login>
     </v-main>
+    <v-snackbar bottom right :value="updateExists" :timeout="0" color="primary">
+      Hay una actualización disponible!
+      <v-btn text @click="refreshApp">
+        Actualizar
+      </v-btn>
+    </v-snackbar>
   </v-app>
 </template>
 <script>
@@ -54,6 +60,15 @@ export default {
       localStorage.removeItem("xn8(*&^%$#47b*g3f76gw3*&^fn734gf8q*&^&^&mwmeg934g8whmre7ngN&G#*!NG@*&#GF(!*#gm1n428fm1g3n84gmf*^$&(%$)e3298negmg");
       this.token = null
     });
+  },
+  methods:{
+    refreshApp() {
+      this.updateExists = false
+      // Make sure we only send a 'skip waiting' message if the SW is waiting
+      if (!this.registration || !this.registration.waiting) return
+      // Send message to SW to skip the waiting and activate the new SW
+      this.registration.waiting.postMessage({ type: 'SKIP_WAITING' })
+    }
   }
 };
 </script>
