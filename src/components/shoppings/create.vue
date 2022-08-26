@@ -175,8 +175,8 @@ export default {
                 created_by_user_id:'',
                 last_updated_by_user_id:'',
             }],
-            iva_percentage:0,
-            isr_percentage:0
+            iva_percentage:'',
+            isr_percentage:''
         },
         snackbar: {
             show: false,
@@ -313,6 +313,12 @@ export default {
             })
         },
         save () {
+            if(this.iva_percentage==''||this.iva_percentage==undefined||this.iva_percentage){
+                this.iva_percentage = 0
+            }
+            if(this.isr_percentage==''||this.isr_percentage==undefined||this.isr_percentage){
+                this.isr_percentage = 0
+            }
             this.editedItem.created_by_user_id = this.currentUser.id
             this.editedItem.last_updated_by_user_id = this.currentUser.id
             axios.post(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/shoppings",Object.assign(this.editedItem)).then(response=>{

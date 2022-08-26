@@ -19,7 +19,7 @@
       <app v-if="token!=null"></app>
       <login v-else></login>
     </v-main>
-    <v-snackbar bottom right :value="updateExists" :timeout="0" color="primary">
+    <v-snackbar bottom right :value="updateExists" color="primary">
       Hay una actualización disponible!
       <v-btn text @click="refreshApp">
         Actualizar
@@ -28,6 +28,7 @@
   </v-app>
 </template>
 <script>
+import update from './mixins/update'
 import App from "../src/views/App"
 import Login from "../src/views/Login"
 import Print from "../src/components/quotations/viewPdf"
@@ -37,6 +38,7 @@ import PrintShipping from "../src/components/shippings/print"
 import PrintTicket from "../src/components/sales/printTicket"
 import axios from "axios"
 export default {
+  mixins: [update],
   name: 'App',
   data: () => ({
     token:localStorage.getItem("xn8(*&^%$#47b*g3f76gw3*&^fn734gf8q*&^&^&mwmeg934g8whmre7ngN&G#*!NG@*&#GF(!*#gm1n428fm1g3n84gmf*^$&(%$)e3298negmg"),
@@ -56,6 +58,7 @@ export default {
     'ticket':PrintTicket,
   },
   mounted(){
+    console.log(this.updateExists)
     axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/user/current").catch(error => {
       localStorage.removeItem("xn8(*&^%$#47b*g3f76gw3*&^fn734gf8q*&^&^&mwmeg934g8whmre7ngN&G#*!NG@*&#GF(!*#gm1n428fm1g3n84gmf*^$&(%$)e3298negmg");
       this.token = null

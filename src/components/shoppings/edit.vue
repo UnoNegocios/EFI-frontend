@@ -150,6 +150,12 @@ export default {
             })
         },
         save () {
+            if(this.iva_percentage==''||this.iva_percentage==undefined||this.iva_percentage){
+                this.iva_percentage = 0
+            }
+            if(this.isr_percentage==''||this.isr_percentage==undefined||this.isr_percentage){
+                this.isr_percentage = 0
+            }
             this.editedItem.last_updated_by_user_id = this.currentUser.id
             axios.put(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/shopping/update",Object.assign(this.editedItem)).then(response=>{
                 this.close()

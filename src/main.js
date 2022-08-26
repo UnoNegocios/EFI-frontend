@@ -8,6 +8,7 @@ import axios from "axios";
 import Echo from "laravel-echo";
 import VueSplide from '@splidejs/vue-splide';
 
+
 Vue.use( VueSplide );
 require('@splidejs/splide/dist/css/splide.min.css')
 window.Pusher = require('pusher-js');

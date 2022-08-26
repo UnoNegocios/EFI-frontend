@@ -283,7 +283,7 @@ export default {
                     if(localStorage.getItem('filtersShoppings')!=null){
                         link = link + JSON.parse(localStorage.getItem('filtersShoppings')) + '&'
                     }
-                    axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/shoppings?" + link + "page=" + page + "&itemsPerPage=" + itemsPerPage).then(response => {
+                    axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/shoppings?" + link + "page=" + page + "&itemsPerPage=" + itemsPerPage + "&sort=-date").then(response => {
                         items = this.mapShoppings(response.data.data)
                         total = response.data.meta.total
                         if (sortBy.length === 1 && sortDesc.length === 1) {
