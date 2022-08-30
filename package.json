@@ -25,6 +25,7 @@
     "vue-html2pdf": "^1.8.0",
     "vue-meta": "^2.4.0",
     "vue-moment": "^4.1.0",
+    "vue-quaggajs": "^1.0.12",
     "vue-router": "^3.2.0",
     "vue-tel-input-vuetify": "^1.2.16",
     "vue-tour": "^2.0.0",

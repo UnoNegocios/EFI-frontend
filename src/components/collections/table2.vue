@@ -258,7 +258,7 @@ export default {
             { text: 'Remisión', value: 'remission'},
             { text: 'Referencia', value: 'note'},
             { text: 'PDF', value: 'pdf'},
-            { text: 'Responsable', value: 'user_id'},
+            { text: 'Usuario', value: 'user_id'},
             { text: 'Creación', value: 'created_at' },
             { text: 'Creador', value: 'created_by_user_id'},
             { text: 'Edición', value: 'updated_at' },

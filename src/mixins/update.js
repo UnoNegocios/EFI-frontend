@@ -9,6 +9,8 @@ export default {
     },
     created() {
       document.addEventListener('swUpdated', this.updateAvailable, { once: true })
+
+
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         // We'll also need to add 'refreshing' to our data originally set to false.
         if (this.refreshing) return
@@ -16,6 +18,7 @@ export default {
         // Here the actual reload of the page occurs
         window.location.reload()
       })
+
     },
     methods: {
       updateAvailable(event) {
@@ -31,4 +34,4 @@ export default {
         this.registration.waiting.postMessage({ type: 'SKIP_WAITING' })
       },
     }
-  }
+}

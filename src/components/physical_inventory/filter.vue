@@ -19,7 +19,7 @@
                 </v-menu>
             </div>
 
-            <v-autocomplete @keydown.enter="filter()" v-model="inventory.user_id" :items="userLists" item-text="name" item-value="id" attach chips label="Responsable" multiple>
+            <v-autocomplete @keydown.enter="filter()" v-model="inventory.user_id" :items="userLists" item-text="name" item-value="id" attach chips label="Usuario" multiple>
                 <template slot="no-data" class="pa-2">No existen usuarios relacionados.</template>  
             </v-autocomplete>
 

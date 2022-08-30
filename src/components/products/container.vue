@@ -92,6 +92,7 @@
                 {{unit(item.unit_id)}}
             </template>
         </v-data-table>
+        
     </v-container>
 </template>
 <script>

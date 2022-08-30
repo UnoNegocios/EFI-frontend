@@ -23,7 +23,12 @@ window.Echo = new Echo({
   disableStats: true
 });
 
-import Quagga from 'quagga';
+import VueQuagga from 'vue-quaggajs';
+// register component 'v-quagga'
+Vue.use(VueQuagga);
+
+import Quagga from 'quagga'; // ES6
+
 
 import VueMeta from 'vue-meta'
 Vue.use(VueMeta, {
@@ -75,6 +80,8 @@ axios.defaults.headers.common['Authorization'] = "Bearer " + localStorage.getIte
 
 
 new Vue({
+  VueQuagga,
+  Quagga,
   router,
   store,
   vuetify,

@@ -144,7 +144,7 @@ export default {
             { text: 'Categoría', value: 'type_id',},
             { text: 'Procedencia', value: 'origin' },
             { text: 'Estatus', value: 'status' },
-            { text: 'Responsable', value: 'salesman' },
+            { text: 'Vendedor', value: 'salesman' },
             { text: 'Creación', value: 'created_at' },
             { text: 'Actualización', value: 'updated_at' },
             { value: 'actions', sortable: false, align: 'end', },

@@ -772,15 +772,38 @@
         <img style="height: 24px;" src="https://unocrm.mx/wp-content/uploads/2020/08/unocrm_logo-1.svg">
         <v-spacer></v-spacer>  
         <!-- search bar -->
-        <!--v-text-field label="Search here for reports analytics and help" prepend-icon="mdi-magnify" rounded light class="hidden-sm-and-down mt-6"></v-text-field-->
+        
+        <v-text-field
+         v-show="permissions('ferreteria')"
+          content-class="mt-0 py-0"
+          v-if="showSearch"
+          rounded
+          light
+          append-icon="mdi-barcode"
+          @click:append="scanner = true"
+          class="mr-12"
+          flat
+          hide-details
+          placeholder="Buscar"
+          prepend-inner-icon="mdi-magnify"
+          background-color=#f5f6fa
+          outlined
+          filled
+          dense
+          v-model="searchInput"
+        ></v-text-field>
         <!-- home button -->
         <v-btn class="hidden-sm-and-down pa-0" icon to="/" link>
           <v-icon color="#707073">mdi-apps</v-icon>
         </v-btn>
+        <!-- punto de venta -->
+        <v-btn class="hidden-sm-and-down pa-0" icon to="/pos" link>
+          <v-icon color="#707073">mdi-cart</v-icon>
+        </v-btn>
         <!-- notification button -->
         <v-menu v-if="currentUser.name!='Felix'" bottom left offset-y origin="top right" transition="scale-transition">
           <template v-slot:activator="{ attrs, on }">
-            <v-btn icon class="ml-2 mr-1" min-width="0" text v-bind="attrs" v-on="on">
+            <v-btn icon min-width="0" text v-bind="attrs" v-on="on">
               <v-badge overlap color="#e25104">
                 <template v-slot:badge>
                   {{notes.length}}
@@ -852,6 +875,15 @@
           <router-view @closeDrawer="closeDrawer"></router-view>
       </v-container>
     </v-main>
+    <!-- Dialogo scanner -->
+    <v-dialog v-model="scanner" max-width="350px">
+        <v-quagga v-if="scanner==true" 
+        :onDetected="logIt" 
+        :readerTypes="['ean_reader']"
+        :readerSize="readerSize"
+        :aspectRatio="aspectRatio"
+        ></v-quagga>
+    </v-dialog> 
   </v-app>
 </template>
 
@@ -861,6 +893,14 @@ import Felix from "../components/orders/container"
   export default {
     name: 'AppContainer',
     data: () => ({
+      readerSize: {
+        width: 640,
+        height: 480
+      },
+      aspectRatio: { min: 1, max: 2 },
+      showSearch:false,
+      scanner:false,
+      searchInput:'',
       drawer: true,
       attrs: {
         class: 'mb-6',
@@ -869,6 +909,14 @@ import Felix from "../components/orders/container"
       },
     }),
     methods:{
+      logIt (data) {
+        //console.log('detected', data.codeResult.code)
+        this.searchInput=data.codeResult.code
+        this.scanner=false
+      },
+      clearSearch: function(params) {
+        this.searchInput = '';
+      },
       closeDrawer: function(params) {
         this.drawer = params;
       },
@@ -957,6 +1005,16 @@ import Felix from "../components/orders/container"
     components:{ 
       'felix':Felix
     },
+    watch:{
+      $route (to, from){
+        console.log(to)
+        if(to.fullPath == "/pos"){
+          this.showSearch = true
+        }else{
+          this.showSearch = false
+        }
+      }
+    },
   }
 </script>
 
@@ -997,5 +1055,43 @@ import Felix from "../components/orders/container"
   }
   .sinsombra .v-expansion-panel::before{
     box-shadow: none!important;
+  }
+
+
+
+
+  .fondo{
+    background-color: #f5f6fa;
+  }
+  .imagen{
+    max-width: 100vw!important;
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover;
+    background-image: url("/files/fondo.jpg");
+  }
+  @media (max-width: 980px){
+    .mobile{
+      display:none!important;
+    }
+    .pc{
+      display:block!important;
+    }
+    .espacio{
+      padding: 0px!important;
+    }
+    .celular{
+      background-color: white!important;
+      border:none!important;
+    }
+  }
+  .pc{
+    display:none;
+  }
+  .espacio{
+    padding: 0px 30px;
+  }
+  .viewport.scanner{
+    position: initial!important;
   }
 </style>

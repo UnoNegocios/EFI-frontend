@@ -86,7 +86,7 @@ export default {
             { text: 'Producto', value: 'item_id', filter: this.itemFilter},
             { text: 'Movimiento', value: 'quantity' },
             { text: 'Fecha', value: 'created_at' },
-            { text: 'Responsable', value: 'created_by_user_id' },
+            { text: 'Usuario', value: 'created_by_user_id' },
             
             { text: 'Existencia', value: 'inventory' },
             //{ text: 'Producción', value: 'production_id' },

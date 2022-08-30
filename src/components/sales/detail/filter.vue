@@ -40,7 +40,7 @@
                 </template> 
             </v-autocomplete>
 
-            <v-autocomplete v-model="quotation.user_id" :items="userList" hide-no-data item-value="id" item-text="name" label="Responsable(s)" placeholder="Escribe para buscar" attach chips multiple></v-autocomplete>
+            <v-autocomplete v-model="quotation.user_id" :items="userList" hide-no-data item-value="id" item-text="name" label="Usuario(s)" placeholder="Escribe para buscar" attach chips multiple></v-autocomplete>
             <v-autocomplete v-model="quotation.created_by_user_id" :items="userList" hide-no-data item-value="id" item-text="name" label="Creador(es)" placeholder="Escribe para buscar" attach chips multiple></v-autocomplete>
             <v-autocomplete v-model="quotation.last_updated_by_user_id" :items="userList" hide-no-data item-value="id" item-text="name" label="Editor(es)" placeholder="Escribe para buscar" attach chips multiple></v-autocomplete>
 

@@ -1,8 +1,10 @@
 <template>
     <v-container >
-        <v-row class="pl-5">
+        <v-row class="pl-5 pt-6">
             <strong>Carrito ({{cartCount}})</strong>
         </v-row>
+
+        <!-- Articulos -->
         <v-row  id="scroll-target" style="height: 40vh" class="overflow-y-auto">
             <v-list class="pb-0">
                 <v-list-item v-for="(item,index) in cart" :key="index" style="border-bottom:1px solid #e0e0e0; margin-left:5px"> <!-- @click="" -->
@@ -24,30 +26,34 @@
                 </v-list-item>   
             </v-list>
         </v-row>
+
+        <!--Totales y boton de pago-->
         <v-row>
             <v-col class="total pa-0">
-                <v-card tile class="pa-6">
-                    <div v-if="contacto(cliente)!=null">Cliente: {{contacto(cliente)}}</div>
-                    <a v-else style="cursor:pointer; text-decoration:none; color:black;" href='/#/clientes'> Cliente: </a>
-                    <v-divider class="py-2"></v-divider>
-                    <v-row>
-                        <v-col cols="2" class="pb-0">
-                            <v-icon class="pt-2" @click="desc='percent'" v-if="desc=='amount'" > mdi-currency-usd</v-icon>
-                            <v-icon class="pt-2" @click="desc='amount'" v-else> mdi-percent</v-icon>
-                        </v-col>
-                        <v-col cols="10" class="pb-0">
-                            <v-text-field class="pt-0" v-model="rebajo" label="Descuento"></v-text-field>
-                        </v-col>
-                    </v-row>
-                    <v-switch class="mt-0" inset v-model="switch1" :label="`${conosiniva().toString()}`"></v-switch>
+                <v-card tile class="pa-6 pt-1">
+                    <v-autocomplete @keydown.enter="filter()" v-model="quotation.company_id" :items="companyLists" :loading="isLoadingCompany" :search-input.sync="searchCompanies" hide-no-data item-value="id" item-text="name" label="Empresa(s)" placeholder="Escribe para buscar" attach chips multiple>
+                        <template v-slot:item="{item, attrs, on}">
+                            <v-list-item v-on="on" v-bind="attrs">
+                                <v-list-item-content>
+                                    <v-list-item-title v-if="item.name!=null">
+                                        <span v-if="item.macro!=null">{{item.macro}}</span>{{item.name}}
+                                        <div v-if="item.razon_social!=null">
+                                            <span style="font-size:12px;">{{item.razon_social}}</span>
+                                        </div>
+                                    </v-list-item-title>
+                                    <v-list-item-title v-else-if="item.razon_social!=null">
+                                        {{item.razon_social}}
+                                    </v-list-item-title>
+                                </v-list-item-content>
+                            </v-list-item>
+                        </template> 
+                    </v-autocomplete>
                     <strong>Sub-Total:</strong> {{(subtotal*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
                     <br>
-                    <strong>Descuento:</strong> {{(descuento*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                    <a v-if="switch1==true" style="color:black;"><br><strong>IVA:</strong> {{(iva*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</a>
+                    <strong>IVA:</strong> {{(subtotal*.16).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
                     <br>
                     <strong>Total:</strong> 
-                        <span v-if="desc=='percent'">{{(suma-((suma/100)*rebajo)).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
-                        <span v-if="desc=='amount'">{{(suma-rebajo).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                        <span>{{(suma).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
                 </v-card>
                 <v-card tile color="#1776d1"><!-- # d71182 -->
                     <v-list-item link @click="pagar()" dark>
@@ -59,12 +65,8 @@
             </v-col>
         </v-row>
 
-        <!-- Dialogo ticket -->
-        <v-dialog v-model="dialogTicket" max-width="350px">
-            <ticket @cerrar="cerrarTicket" v-bind:id="orden"></ticket>
-        </v-dialog> 
-        <!-- Dialogo ticket -->
-        <v-dialog v-model="dialogPago" max-width="720px">
+        <!-- Dialogo pago -->
+        <v-dialog v-model="dialogPay" max-width="720px">
             <v-card>
               <!-- Titulo -->
               <v-card-title>
@@ -92,14 +94,14 @@
               
               <v-divider class="mx-12 my-6 mt-0"></v-divider>
               <div class="text-center">
-                <v-btn v-if="perro=='no'" color="grey" @click="perro='si'" text>Agendar Envío</v-btn>
-                <v-btn v-if="perro=='si'" color="grey" @click="perro='no'" text><v-icon> mdi-chevron-up</v-icon></v-btn>
+                <v-btn v-if="showDetails=='no'" color="grey" @click="showDetails='si'" text>Agendar Envío</v-btn>
+                <v-btn v-if="showDetails=='si'" color="grey" @click="showDetails='no'" text><v-icon> mdi-chevron-up</v-icon></v-btn>
               </div>
               <!-- Notas -->
-              <v-card-subtitle class="pb-0" v-if="perro=='si'">
+              <v-card-subtitle class="pb-0" v-if="showDetails=='si'">
                 <h3><strong>Notas</strong></h3>
               </v-card-subtitle>
-              <v-card-text v-if="perro=='si'">
+              <v-card-text v-if="showDetails=='si'">
                 <v-container>
                   <!-- Formulario -->
                   <v-row>
@@ -135,28 +137,21 @@
               </v-card-actions>
             </v-card>
         </v-dialog> 
+
+        <!-- Dialogo ticket -->
+        <v-dialog v-model="dialogTicket" max-width="350px">
+            <ticket @cerrar="cerrarTicket" v-bind:id="orden"></ticket>
+        </v-dialog> 
+
     </v-container>
 </template>
 
 <script>
 import axios from "axios";
 export default {
-    props:{
-        cliente:String,
-    },
     data:()=>({
-        apagado: false,
-        switch1: true,
-        metodosLists:[
-            'Tarjeta de Credito',
-            'Tarjeta de Debito',
-            'Efectivo',
-            'Transferencia',
-        ],
-        perro:'no',
-        rebajo:'',
-        desc:'percent',
-        dialogPago:false,
+        showDetails:'no',
+        dialogPay:false,
         orden:'',
         dialogTicket:false,
         menu:false,
@@ -182,7 +177,6 @@ export default {
             }],
             comentario:'',
         },
-
         quotation:{
             company_id:null,
             contact_id:'',
@@ -211,26 +205,34 @@ export default {
             invoice_date:'',
             due_date:''
         },
-
-
-
-
-
-
-
-    }),
-    computed: {
-        botongris(){
-            if(this.apagado==true || this.ticket.metodos[0].metodo==''){
-                return true
-            }else{
-                return false
-            }
+        entries:{
+            companies: []
         },
-        currentUser:{
-            get(){
-                return this.$store.state.currentUser.user;
-            }
+        isLoadingCompany: false,
+        searchCompanies: null,
+    }),
+    watch: {
+        searchCompanies(val){
+            //if (this.companyLists.length > 0) return
+            if (this.isLoadingCompany) return
+            this.isLoadingCompany = true
+            axios.get(process.env.VUE_APP_BACKEND_ROUTE + 'api/v2/company_p?filter[name]='+val)
+            .then(res => {
+                this.entries.companies = res.data.data
+            }).finally(() => (this.isLoadingCompany = false))
+        },
+    },
+    computed: {
+        companyLists(){
+            return this.entries.companies.map(id => {
+                return{
+                    id:id.id,
+                    macro:id.macro,
+                    name:id.name,
+                    razon_social:id.razon_social,
+                    //price_list:id.price_list.name
+                }
+            })
         },
         StoreCart() {
             return this.$store.state.carrito.carritos
@@ -244,54 +246,6 @@ export default {
                 sum += Number(e.price);
             });
             return sum.toFixed(2)
-        },
-        iva: function(){
-            if(this.switch1==true){
-                var sum = 0;
-                this.cart.forEach(e => {
-                    sum += (Number(e.price));
-                });
-                if(this.rebajo!=''){
-                    var subtotal = sum
-                    if(this.desc=='percent'){
-                        subtotal = sum-((sum/100)*this.rebajo)
-                    }
-                    if(this.desc=='amount'){
-                        subtotal = sum-this.rebajo
-                    }
-                    return (subtotal*.16).toFixed(2)
-                }else{
-                    return (sum*.16).toFixed(2)
-                }
-            }else{
-                return 16*0
-            }
-        },
-        suma: function(){
-            
-            var sum = 0;
-            this.cart.forEach(e => {
-                sum += (Number(e.price));
-            });
-            if(this.switch1==true){
-                return (sum*1.16).toFixed(2)
-            }else{
-                return sum.toFixed(2)
-            }
-        },
-        descuento: function(){
-            var sum = 0;
-            this.cart.forEach(e => {
-                sum += (Number(e.price));
-            });
-            var subtotal = sum
-            if(this.desc=='percent'){
-                subtotal = sum-((sum/100)*this.rebajo)
-            }
-            if(this.desc=='amount'){
-                subtotal = sum-this.rebajo
-            }
-            return (subtotal-sum).toFixed(2)
         },
         cart() {
             return this.$store.state.carrito.carritos.map(cartitems => {
@@ -307,16 +261,9 @@ export default {
         this.$store.dispatch('item/getItems')
     },
     methods: {
-        conosiniva(){
-            if(this.switch1==true){
-                return 'con IVA'
-            }else{
-                return 'sin IVA'
-            }
-        },
         pagar(){
             this.ticket.metodos[0].monto = this.suma
-            this.dialogPago = true
+            this.dialogPay = true
         },
         add(index) {
             var sum = 0
@@ -332,7 +279,6 @@ export default {
         },
         removeItem(index) {
             this.$store.dispatch('carrito/removeItem', index);
-            this.$emit("closeCreateDialogCalendar", 'perro');
         },
         save(){
             this.apagado = true
@@ -375,13 +321,6 @@ export default {
                     this.dialogTicket=true;
                 })
             });
-        },
-        cerrarTicket: function(params) {
-            this.dialogTicket=false;
-            location.reload();
-        },
-        contacto(id) {
-            return this.$store.state.contact.contacts.filter(contacto => contacto.id === id).map(contacto => contacto.name)[0];;
         },
     },
 };

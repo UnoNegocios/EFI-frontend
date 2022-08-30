@@ -4,7 +4,7 @@
         <v-btn class="ma-4" bottom color="#32241c" dark fab fixed right>
             <v-icon @click.stop="carrito = !carrito" color="white"> mdi-cash-multiple</v-icon>
         </v-btn>
-        <v-navigation-drawer right v-model="carrito" :clipped="$vuetify.breakpoint.lgAndUp" app>
+        <v-navigation-drawer style="top:0!important; height:100vh; max-height:100vh;" right v-model="carrito" :clipped="$vuetify.breakpoint.lgAndUp" app>
             <carrito @closeCreateDialogCalendar="closeCreateDialogCalendar"></carrito>
         </v-navigation-drawer>
         <!-- Filtro -->
@@ -140,52 +140,9 @@ export default {
                 this.renderComponent = true;
             });
         },
-        cantidaDisponible(inventario){
-            if(this.currentUser.name == 'Sucursal 1'){
-                return inventario.arboleda
-            }
-            else if(this.currentUser.name == 'Sucursal 2'){
-                return inventario.plazavita
-            }
-        },
-        inventario(inventario, id){  
-            var disponibles = inventario
-            if(this.currentUser.name == 'Sucursal 1'){
-                if(disponibles.arboleda>0){
-                    for(var i=0; i<this.cart.length; i++){
-                        if(this.cart[i]==id){
-                            -- disponibles.arboleda
-                        }
-                    }
-                    if(disponibles.arboleda>0){
-                        return false
-                    }else{
-                        return true
-                    }
-                }else{
-                    return true
-                }
-            } 
-
-            
-            else if(this.currentUser.name == 'Sucursal 2'){
-                if(disponibles.plazavita>0){
-                    for(var i=0; i<this.cart.length; i++){
-                        if(this.cart[i]==id){
-                            -- disponibles.plazavita
-                        }
-                    }
-                    if(disponibles.plazavita>0){
-                        return false
-                    }else{
-                        return true
-                    }
-                }else{
-                    return true
-                }
-            }
-            
-        }
+    },
+    created(){
+        this.$emit("closeDrawer", false);
     }
 }
 </script>

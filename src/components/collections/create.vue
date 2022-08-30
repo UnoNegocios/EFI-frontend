@@ -327,10 +327,12 @@
         },
         methods: {
             salesLists2(){
+                console.log('perro')
                     axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/company/quotations", {params:{id:this.collection.company_id}})
                     .then((res) => {
+                        console.log(res)
                         this.esperaLaInfo = true
-                        this.salesLists = res.data.data.filter(sale=>sale.status == 'vendido').filter(sale=>this.due(sale.id, sale.total) > 0).map(id=>{
+                        this.salesLists = res.data.data.filter(sale=>sale.status == 'vendido').filter(sale=>sale.payment_status != 'Cobrada').map(id=>{
                             return{
                                 id:id.id,
                                 total:id.total,//.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',}),

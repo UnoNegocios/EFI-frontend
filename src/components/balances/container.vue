@@ -8,7 +8,7 @@
                         <v-icon medium @click="filter=!filter" class="ml-4"> mdi-filter</v-icon>
                         <v-spacer/>
                         <!-- Filtrar por Responsable -->
-                        <v-autocomplete v-if="filter" v-model="salesmanFilterValue" clearable :items="userLists" label="Responsable" item-text="name" item-value="id">
+                        <v-autocomplete v-if="filter" v-model="salesmanFilterValue" clearable :items="userLists" label="Usuario" item-text="name" item-value="id">
                             <template slot="no-data" class="pa-2">No existen usuarios relacionados.</template>                      
                         </v-autocomplete>
                         <v-btn v-if="filter" small rounded color="primary" class="elevation-0 ml-4" @click="filterNow()">Filtrar</v-btn>
