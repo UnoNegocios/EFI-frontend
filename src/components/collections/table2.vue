@@ -455,11 +455,14 @@ export default {
             }
         },
         macroCapture(id, value){
-            var collection = this.$store.state.collection.collections.filter(collection=>collection.id == id)[0]
-            collection.macro = value
-            collection.payment_complement = this.complemento
+
+            var collection = {
+                macro: value,
+                payment_complement: this.complemento
+            }
             this.$nextTick(() => {
-                axios.put(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/collection/update",Object.assign(collection)).then(response=>{
+
+                axios.patch(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/collections/" + id, collection).then(response=>{
                     this.getDataFromApi()
                     this.complemento = ''
                 }).catch(error => {
@@ -470,6 +473,7 @@ export default {
                     }
                 })
             })
+
         },
         openFilter(){
             if(this.filters == false){

@@ -762,7 +762,7 @@
       </v-list>
       <template v-slot:append>
         <div style="color:#9ca3a5; font-size: 12px;" class="pa-2">
-          UNOCRM | v4.1.45 <v-icon> mdi-settings</v-icon>
+          UNOCRM | v4.1.47 <v-icon> mdi-settings</v-icon>
         </div>
       </template>
     </v-navigation-drawer>
@@ -841,10 +841,18 @@
             <v-list-item-group color="primary">
               <v-list-item link to="/settings" v-if="currentUser.name!='Felix'">
                 <v-list-item-action>
-                  <v-icon> mdi-cog</v-icon>
+                  <v-icon>mdi-cog-outline</v-icon>
                 </v-list-item-action>
                 <v-list-item-content>
                   <v-list-item-title>Ajustes</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item v-if="currentUser.id==1" link to="/support">
+                <v-list-item-action>
+                  <v-icon>mdi-information-outline</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title>Soporte</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item link @click="logout">
@@ -855,7 +863,6 @@
                   <v-list-item-title>Cerrar Sesión</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-              
             </v-list-item-group>
           </v-list>
         </v-menu>
@@ -909,6 +916,9 @@ import Felix from "../components/orders/container"
       },
     }),
     methods:{
+      search(){
+        this.$store.dispatch('product/getProducts', {search:this.searchInput, items:12}) 
+      },
       logIt (data) {
         //console.log('detected', data.codeResult.code)
         this.searchInput=data.codeResult.code
@@ -1007,8 +1017,8 @@ import Felix from "../components/orders/container"
     },
     watch:{
       $route (to, from){
-        console.log(to)
         if(to.fullPath == "/pos"){
+          this.$store.dispatch('product/getProducts', {searchInput:this.searchInput, items:12}) 
           this.showSearch = true
         }else{
           this.showSearch = false

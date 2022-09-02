@@ -53,7 +53,8 @@ import unit from "./modules/unit"
 import expense_type from "./modules/expense_type"
 import inventory from "./modules/inventory"
 
-import carrito from "./modules/carrito"
+import cart from "./modules/cart"
+import product from "./modules/product"
 
 import reports from "./modules/reports"
 
@@ -65,6 +66,8 @@ import lead from "./modules/lead"
 
 import raw_material from "./modules/raw_material"
 
+import support from "./modules/support"
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -74,12 +77,12 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
+    support,
     raw_material,
     lead,
     funnel,
     cards,
     reports,
-    carrito,
     inventory,
     expense_type,
     unit,
@@ -125,6 +128,8 @@ export default new Vuex.Store({
     user,
     status,
     category,
-    pp
+    pp,
+    cart,
+    product
   }
 })

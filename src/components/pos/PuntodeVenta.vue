@@ -1,45 +1,17 @@
 <template>
     <v-container class="pl-9">
-        <!-- open car -->
-        <v-btn class="ma-4" bottom color="#32241c" dark fab fixed right>
-            <v-icon @click.stop="carrito = !carrito" color="white"> mdi-cash-multiple</v-icon>
-        </v-btn>
-        <v-navigation-drawer style="top:0!important; height:100vh; max-height:100vh;" right v-model="carrito" :clipped="$vuetify.breakpoint.lgAndUp" app>
-            <carrito @closeCreateDialogCalendar="closeCreateDialogCalendar"></carrito>
+        <!-- carrito-->
+        <v-navigation-drawer style="top:0!important; height:100vh; max-height:100vh;" right v-model="open_cart" :clipped="$vuetify.breakpoint.lgAndUp" app>
+            <cart/>
         </v-navigation-drawer>
-        <!-- Filtro -->
-        <v-row v-if="search=='filtro'" class="py-4">
-            <v-col cols="3" class="pt-0">
-                <v-text-field prepend-inner-icon="search" v-model="productoFilterValue" clearable label="Producto"></v-text-field>
-            </v-col>
-            <v-col cols="3" class="pt-0">
-                <v-autocomplete v-model="categoriaFilterValue" clearable :items="categoriaLists" label="Categoría" item-text="categoria" item-value="id">
-                    <template slot="no-data" class="pa-2">No existen categorías relacionadas.</template>                      
-                </v-autocomplete>
-            </v-col>
-            <v-col cols="2" class="pt-0">
-                <v-autocomplete v-model="colorFilterValue" clearable :items="servicios" label="Color" item-text="color" item-value="color">
-                    <template slot="no-data" class="pa-2">No existen colores relacionados.</template>                      
-                </v-autocomplete>
-            </v-col>
-            <v-col cols="3">
-                <v-range-slider v-model="range" :max="max" :min="min" hide-details class="align-center">
-                    <template v-slot:prepend>
-                        <v-text-field prefix="$" :value="range[0]" class="mt-0 pt-0" hide-details single-line type="number" style="width: 70px" @change="$set(range, 0, $event)"></v-text-field>
-                    </template>
-                    <template v-slot:append>
-                        <v-text-field prefix="$" :value="range[1]" class="mt-0 pt-0" hide-details single-line type="number" style="width: 70px" @change="$set(range, 1, $event)"></v-text-field>
-                    </template>
-                </v-range-slider>
-            </v-col>
-        </v-row>
-        <v-row justify="center" v-if="renderComponent">
-            <v-col class="my-4 mx-0" v-for="(servicio,k) in servicios" :key="k">
-                <v-card :disabled="servicio.disponible" @click="addToCart(servicio.id)" width="19vw">
-                    <v-img height="150px" width="19vw" v-bind:src="liga + 'files/' + servicio.imagen"></v-img>
-                    <v-card-subtitle class="pb-0">{{servicio.servicio}}</v-card-subtitle>
+
+        <v-row justify="center">
+            <v-col class="my-4 mx-0" v-for="(product,k) in products" :key="k">
+                <v-card :disabled="product.inventory>0" @click="addToCart(product)" width="19vw">
+                    <v-img height="150px" width="19vw" v-bind:src="liga + 'files/' + product.image"></v-img>
+                    <v-card-subtitle class="pb-0">{{product.name}}</v-card-subtitle>
                     <v-card-text class="text--primary">
-                        <div>{{(servicio.valor).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</div>
+                        <div>{{(product.value).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</div>
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -53,96 +25,40 @@
 </template>
 <script>
 import axios from "axios";
-import Carrito from "../pos/Carrito"
+import Cart from "../pos/Cart"
 export default {
     components: {
-        'carrito':Carrito,
+        'cart':Cart,
     },
     data:()=>({ 
-        search:'', 
-        renderComponent:true,
+        open_cart:true,
         limit:12,
-        carrito:true,
-        min: 0,
-        max: 3000,
-        range: [0, 3000],
-        productoFilterValue:'',
-        categoriaFilterValue:'',
-        colorFilterValue:'',
     }),
     computed:{
         liga(){
             return process.env.VUE_APP_BACKEND_ROUTE
         },
         cart() {
-            return this.$store.state.carrito.carritos
+            return this.$store.state.cart.carts
         },
-        currentUser:{
-            get(){
-                return this.$store.state.currentUser.user;
-            }
-        },
-        categoriaLists() {
-            return this.$store.state.category.categories;
-        },
-        servicios:{
-            get(){
-                var respuesta = this.$store.state.item.items.filter(item=>item.type!='variable').filter(item=>item.price>0).map(id=>{
-                    return{
-                        disponible:this.inventario(id.inventory, id.id),
-                        imagen:id.images,
-                        servicio:id.name,
-                        valor:id.price*1,
-                        id:id.id,
-                        inventario:id.inventory,
-                        sku:id.sku,
-                        codigo:id.macro
-                    }
-                });
-                if(this.search!='' && this.search!='filtro') {
-                    respuesta = respuesta.filter(servicio => 
-                        servicio.name.toLowerCase().includes(this.search.toLowerCase()) 
-                        || ((servicio.macro+'fdl').toLowerCase().includes(this.search.toLowerCase()+'fdl'))
-                        || ((servicio.sku+'fdl').toLowerCase().includes(this.search.toLowerCase()+'fdl'))
-                    )
-                    return this.limit ? respuesta.slice(0,this.limit) : this.respuesta
-                }
-                else if(this.search=='filtro') {
-                    if(this.productoFilterValue!='' && this.productoFilterValue!=null && this.productoFilterValue!=undefined){
-                        respuesta = respuesta.filter(servicio => servicio.name.toLowerCase().includes(this.productoFilterValue.toLowerCase()))
-                    }
-                    if(this.categoriaFilterValue!='' && this.categoriaFilterValue!=null && this.categoriaFilterValue!=undefined){
-                        respuesta = respuesta.filter(servicio => servicio.categoria == this.categoriaFilterValue)
-                    }
-                    if(this.colorFilterValue!='' && this.colorFilterValue!=null && this.colorFilterValue!=undefined ){
-                        respuesta = respuesta.filter(servicio => servicio.color == this.colorFilterValue)
-                    }
-                    if(this.range!=[0, 10000]){
-                        respuesta = respuesta.filter(servicio => servicio.valor >= this.range[0])
-                        respuesta = respuesta.filter(servicio => servicio.valor <= this.range[1])
-                    }
-                    return this.limit ? respuesta.slice(0,this.limit) : this.respuesta
-                }else{
-                    return this.limit ? respuesta.slice(0,this.limit) : this.respuesta
-                }
-            }
+        products(){
+            return this.$store.state.product.products
         },
     },
     methods:{
         addToCart(id) {
-            this.$store.dispatch("carrito/addItem", id);
-            this.$store.dispatch('item/getItems')
-        },
-        closeCreateDialogCalendar: function(params) {
-            this.$store.dispatch('item/getItems')
-            this.renderComponent = false;
-            this.$nextTick(() => {
-                this.renderComponent = true;
-            });
-        },
+            this.$store.dispatch("cart/addItem", id);
+        }
     },
     created(){
         this.$emit("closeDrawer", false);
+    },
+    watch:{
+        limit:{
+            handler(){
+                this.$store.dispatch('product/getProducts', {search:this.$store.state.products.search, items:this.limit}) 
+            }, deep:true
+        }
     }
 }
 </script>

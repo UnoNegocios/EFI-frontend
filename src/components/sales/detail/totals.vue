@@ -56,5 +56,8 @@ export default {
     props:{
         totals:Object
     },
+    methods(){
+        
+    }
 }
 </script>

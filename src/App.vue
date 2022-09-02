@@ -58,7 +58,6 @@ export default {
     'ticket':PrintTicket,
   },
   mounted(){
-    console.log(this.updateExists)
     axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/user/current").catch(error => {
       localStorage.removeItem("xn8(*&^%$#47b*g3f76gw3*&^fn734gf8q*&^&^&mwmeg934g8whmre7ngN&G#*!NG@*&#GF(!*#gm1n428fm1g3n84gmf*^$&(%$)e3298negmg");
       this.token = null

@@ -431,7 +431,7 @@ import axios from "axios";
             }
             this.quotation.status = this.status
             this.$nextTick(() => {
-                axios.post(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/quotation/create",Object.assign(this.quotation)).then(response=>{
+                axios.post(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/sales",Object.assign(this.quotation)).then(response=>{
                     this.$store.dispatch('quotation/getQuotations')
                 }).catch(error => {
                     this.snackbar = {

@@ -274,27 +274,7 @@ export default {
         },
         pastDueTotals(){
             return this.$store.state.cards.past_due_totals
-        },
-        loading1(){
-            return this.$store.state.cards.total_loader1
-        },
-        loading2(){
-            return this.$store.state.cards.total_loader2
-        },
-        loading3(){
-            return this.$store.state.cards.total_loader3
-        },
-        loading4(){
-            return this.$store.state.cards.total_loader4
-        },
-        loading5(){
-            return this.$store.state.cards.total_loader5
-        },
-        currentUser:{
-            get(){
-                return this.$store.state.currentUser.user;
-            }
-        },
+        }
     },
     methods:{
         openFilter(){
@@ -311,25 +291,14 @@ export default {
             this.$store.dispatch('cards/getSaleTotals')
             this.$store.dispatch('cards/getPastDueTotals')
             this.$store.dispatch('cards/getCollectionTotals')
+            this.$store.dispatch('cards/getProviderPaymentsTotals')
+            this.$store.dispatch('cards/getShoppingTotals')
         },
         filterStorage(){
             if(localStorage.getItem('filtersCardsLength')!=null){
                 false
             }else{
                 return true
-            }
-        },
-        permissions(permission){
-            if(this.currentUser.id==1){
-                return true
-            }else if(this.currentUser.permissions!=undefined){
-                if(this.currentUser.permissions.includes(permission)){
-                    return true
-                }else{
-                    return false
-                }
-            }else{
-                return false
             }
         },
     }

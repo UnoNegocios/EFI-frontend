@@ -250,6 +250,11 @@ const routes = [
     component: () => import('../components/ferreteria/container.vue')
   },
 
+  {
+    path: '/support',
+    name: 'Soporte',
+    component: () => import('../components/support/container.vue')
+  },
   /*
   {
     path: '/results',
