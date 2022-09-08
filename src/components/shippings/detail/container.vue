@@ -459,11 +459,11 @@ import axios from "axios";
             },
             closeDialogEditShipping: function(params) {
                 this.editDialog = false;
-                
+                this.$emit("newDetail", false);
             },
             closeDialogAddShipping: function(params) {
                 this.addDialog = false;
-                
+                this.$emit("newDetail", false);
             }
         }
     }

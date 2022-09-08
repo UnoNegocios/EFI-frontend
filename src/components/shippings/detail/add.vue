@@ -45,7 +45,7 @@
 import axios from "axios";
     export default {
         props:{
-            shippingId:Number
+            shippingId:Object
         },  
         data: () => ({
             datePicker:'',
@@ -135,7 +135,7 @@ import axios from "axios";
         },
         save(){
             this.gris = false
-            this.shipping.shipping_id=this.shippingId
+            this.shipping.shipping_id=this.shippingId.id
             this.shipping.created_by_user_id=this.currentUser.id;
             this.shipping.last_updated_by_user_id=this.currentUser.id;
             this.$nextTick(() => {
@@ -150,6 +150,7 @@ import axios from "axios";
                     this.gris = false
                 })
             })
+        
         },
     },
 }

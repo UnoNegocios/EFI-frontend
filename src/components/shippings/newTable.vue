@@ -121,7 +121,7 @@
             <!-- Detalle PC -->
             <template v-slot:expanded-item="{ headers, item }" v-show="permissions('shipping_details')">
                 <td :colspan="headers.length">
-                    <detail v-bind:shipping="item" />
+                    <detail @newDetail="newDetail" v-bind:shipping="item" />
                 </td>
             </template>
         </v-data-table>
@@ -508,6 +508,9 @@ export default {
         },
         closeDialogEditShipping: function(params) {
             this.editDialog = false;
+            this.getDataFromApi()
+        },
+        newDetail: function(params) {
             this.getDataFromApi()
         },
         closeCreateDialogShipping: function(params) {
