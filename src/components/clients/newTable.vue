@@ -141,7 +141,8 @@ export default {
             { text: 'Empresa', value: 'name', width: '100%'},
             { text: 'Código Macro', value: 'number',},
             { text: 'Rango de Consumo', value: 'phase' },
-            { text: 'Categoría', value: 'type_id',},
+            { text: 'Tipo de Cliente', value: 'type_id',},
+            { text: 'Categoría', value: 'consumptions',},
             { text: 'Procedencia', value: 'origin' },
             { text: 'Estatus', value: 'status' },
             { text: 'Vendedor', value: 'salesman' },
@@ -153,6 +154,9 @@ export default {
             get(){
                 return this.$store.state.currentUser.user;
             }
+        },
+        categoryLists(){
+            return this.$store.state.category.categories;
         },
     },
     watch: {
@@ -220,7 +224,8 @@ export default {
                     type_id:this.exist(id.attributes.company_type),
                     credit_days:id.attributes.credit_days*1,
                     activity_indicator: id.attributes.activity_indicator,
-                    editedItem:id
+                    editedItem:id,
+                    consumptions:this.mapCategories(id.attributes.consumptions),
                 }
             });
         },
@@ -331,7 +336,7 @@ export default {
 
                     payment_conditions:id.attributes.payment_conditions,
                     opportunity_area:id.attributes.opportunity_area,
-                    consumptions:id.attributes.consumptions,
+                    consumptions:id.attributes.consumptions,//this.mapCategories(id.attributes.consumptions),
                     special_conditions:id.attributes.special_conditions,
                     special_note:id.attributes.special_note,
                     credit_limit:id.attributes.credit_limit,
@@ -340,6 +345,19 @@ export default {
                 }
             })[0]
             this.editDialog = true
+        },
+        mapCategories(consumptions){
+            //return consumptions
+            var response = ''
+            if(consumptions!=undefined){
+                for(var i=0; i<consumptions.length; i++){
+                    response = response + this.categoryLists.filter(category=>category.id == consumptions[i]).map(category=>category.name)[0]
+                    if(i!=(consumptions.length-1)){
+                        response = response + ', '
+                    }
+                }
+            }
+            return response
         },
         ids(item){
             if(item!=undefined){

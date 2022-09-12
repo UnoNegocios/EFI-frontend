@@ -26,6 +26,12 @@
             <!--v-text-field @keydown.enter="filter()" v-model="company.razon_social" label="Razón Social"></v-text-field-->
             <v-text-field @keydown.enter="filter()" v-model="company.bank_account_number" label="Numero de Cuenta"></v-text-field>
 
+            <v-select @keydown.enter="filter()" v-model="company.categories" :items="categoryLists" item-text="name" item-value="id" attach chips label="Categoría" multiple>
+            </v-select>
+
+            <v-select @keydown.enter="filter()" v-model="company.types" :items="typeLists" item-text="type" item-value="id" attach chips label="Tipo de Cliente" multiple>
+            </v-select>
+
             <v-select @keydown.enter="filter()" v-model="company.origins" :items="originLists" item-text="name" item-value="id" attach chips label="Procedencia" multiple>
             </v-select>
             
@@ -78,7 +84,9 @@
             dateUpdate:[],
             semaforo:'',
             bank_account_number:'',
-            number:''
+            number:'',
+            categories:'',
+            types:''
         },
     }),
     computed: {
@@ -93,6 +101,12 @@
         },
         statusLists(){
             return this.$store.state.status.statuses;
+        },
+        categoryLists(){
+            return this.$store.state.category.categories;
+        },
+        typeLists(){
+            return this.$store.state.type.types;
         },
     },
     created () {
@@ -163,6 +177,28 @@
                 var length = this.company.phases.length
                 for(var i=0; i<length; i++){
                     filter = filter + this.company.phases[i]
+                    if(length>1 && i<length-1){
+                        filter = filter + ','
+                    }
+                }
+            }
+            if(this.company.categories!=undefined && this.company.categories.length>0){
+                count = count+1
+                filter = filter + '&filter[consumptions.id]='
+                var length = this.company.categories.length
+                for(var i=0; i<length; i++){
+                    filter = filter + this.company.categories[i]
+                    if(length>1 && i<length-1){
+                        filter = filter + ','
+                    }
+                }
+            }
+            if(this.company.types!=undefined && this.company.types.length>0){
+                count = count+1
+                filter = filter + '&filter[type_id]='
+                var length = this.company.types.length
+                for(var i=0; i<length; i++){
+                    filter = filter + this.company.types[i]
                     if(length>1 && i<length-1){
                         filter = filter + ','
                     }

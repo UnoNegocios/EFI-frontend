@@ -98,14 +98,14 @@
                     <!--br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span-->
                 </v-card>
             </v-col>
-            <v-col md="2" sm="6" class="px-2">
+            <!--v-col md="2" sm="6" class="px-2">
                 <v-card class="py-2 px-4 elevation-0">
                     <v-icon x-small color="#ea4435" class="mr-1">mdi-circle</v-icon> 
                     <span style="font-size:12px;"><strong>Por Cobrar</strong></span>
                     <br/>{{(totals.sum_cobrar*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                    <!--br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span-->
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
                 </v-card>
-            </v-col>
+            </v-col-->
 
 
         </v-row>
