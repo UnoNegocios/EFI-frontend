@@ -537,6 +537,19 @@
             </template>
           <span>Catálogo de Productos para Vendedores</span>
         </v-tooltip>
+        <v-tooltip v-show="permissions('inventory')" right open-delay="1000">
+          <template v-slot:activator="{ on, attrs }">
+            <v-list-item to="/products-pos" link v-bind="attrs" v-on="on">
+              <v-list-item-action class="mr-3">
+                <v-icon>mdi-apps</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Productos</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            </template>
+          <span>Catálogo de Productos para Vendedores</span>
+        </v-tooltip>
               
 
         <!-- Inventario -->
@@ -762,7 +775,7 @@
       </v-list>
       <template v-slot:append>
         <div style="color:#9ca3a5; font-size: 12px;" class="pa-2">
-          UNOCRM | v4.1.49 <v-icon> mdi-settings</v-icon>
+          UNOCRM | v4.1.50 <v-icon> mdi-settings</v-icon>
         </div>
       </template>
     </v-navigation-drawer>
