@@ -419,7 +419,7 @@ import axios from "axios";
                 this.quotation.items[i].cost = this.itemLists.filter(item=>item.id == this.quotation.items[i].item).map(item=>item.cost)[0]
             }
             */
-           this.gris = true
+            this.gris = true
             this.quotation.created_by_user_id = this.currentUser.id
             this.quotation.last_updated_by_user_id = this.currentUser.id
             if(this.quotation.type == 'Serie A'){

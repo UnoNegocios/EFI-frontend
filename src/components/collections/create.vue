@@ -289,6 +289,7 @@
             },
             grey(){
                 if(this.collection.company_id!=''&&this.collection.company_id!=null&&this.collection.company_id!=undefined &&
+                    this.collection.date!=''&&this.collection.date!=null&&this.collection.date!=undefined &&
                     this.collection.amount!=''&&this.collection.amount!=null&&this.collection.amount!=undefined){
                         return false
                 }else{

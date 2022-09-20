@@ -15,6 +15,10 @@
                     </v-row>
                 </v-toolbar>
             </template>
+            <!-- Empresa -->
+            <template v-slot:[`item.client`]="{ item }">
+                <v-list-item class="px-0" style="min-height:0px!important; font-size:14px;" :to="{ path: '/clients/client/'+ item.client.id}">{{item.client.name}}</v-list-item>
+            </template>
             <template v-slot:[`item.cero`]="{ item }">
                 {{item.cero.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
             </template>
@@ -65,7 +69,7 @@ export default {
     computed:{
         headers(){
             return[
-                { text: 'Cliente', value: 'name'},
+                { text: 'Cliente', value: 'client'},
                 { text: '+0 días vencido', value: 'cero',},
                 { text: '+30 días vencido', value: 'treinta',},
                 { text: '+60 días vencido', value: 'sesenta',},
@@ -103,13 +107,16 @@ export default {
                 }
                 this.clients = unicos.map(id=>{
                     return{
-                        name: id.company,
+                        client: id.company,
                         due: this.due(response.data.filter(sale=>sale.company == id.company)),
                         salesman: id.salesman.id
                     }
                 }).map(id=>{
                     return{
-                        name:id.name,
+                        client:[id.client].map(item=>{return{
+                            id: item.id,
+                            name: item.name
+                        }})[0],
                         cero:id.due.cero,
                         treinta:id.due.treinta,
                         sesenta:id.due.sesenta,

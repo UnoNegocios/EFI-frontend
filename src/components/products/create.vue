@@ -3,11 +3,14 @@
     <v-card class="elevation-0 pa-6">
         <v-row class="ma-0">
             <v-col cols="7">
-                <v-autocomplete v-if="newProduct==''" @keydown.enter="filter()" v-model="product_id" :items="productsList" :loading="isLoadingProducts" :search-input.sync="searchProducts" item-text="name" item-value="id" label="Producto" placeholder="Escribe para buscar o crear">
+                <v-autocomplete v-if="newProduct==''" v-model="product_id" :items="productsList" :loading="isLoadingProducts" :search-input.sync="searchProducts" item-text="name" item-value="id" label="Producto" placeholder="Escribe para buscar o crear">
                     <template slot="no-data">
-                        <div class="px-6 pt-3" v-if="searchProducts!=''">
-                            No existen proveedores relacionados.
+                        <div class="px-6 pt-3" v-if="searchProducts!=null && !isLoadingProducts"><!--@keydown.enter="search=true"  ----  &&!isLoadingProducts&&!search-->
+                            No existen productos relacionados.
                             <v-text-field v-model="searchProducts" label="Crear Producto" append-icon="mdi-plus" @click:append="newProduct=searchProducts"></v-text-field>
+                        </div>
+                        <div class="px-6 pt-3" v-else>
+                            Escribe para buscar o crear
                         </div>
                     </template>
                 </v-autocomplete>
@@ -17,7 +20,7 @@
                 <div v-if="product.provider!=''">
                     <span>Proveedor Actual:</span>
                     <br/>
-                    <v-chip :to="{ path: '/providers/'+ product.provider}" small class="mt-1" color="primary">{{product.provider}}</v-chip>
+                    <v-chip :to="{ path: '/providers/'+ product.provider.id}" small class="mt-1" color="#e4e4e4" style="font-weight:500;">{{product.provider.name}}</v-chip>
                 </div>
                 <v-autocomplete v-else :items="providers" :search-input.sync="createProvider.name" label="Proveedor" item-text="name" item-value="id" v-model="provider_id">
                     <template slot="no-data">
@@ -38,26 +41,26 @@
                     <v-col cols="4" class="px-0">
                         <div class="tabla"></div>
                         <div class="tabla">
-                            <span style="margin:auto;">Precio 1</span>
+                            <span style="font-weight:500; margin:auto;">PRECIO 1</span>
                         </div>
                         <div class="tabla">
-                            <span style="margin:auto;">Precio 2</span>
+                            <span style="font-weight:500; margin:auto;">PRECIO 2</span>
                         </div>
                         <div class="tabla">
-                            <span style="margin:auto;">Precio 3</span>
+                            <span style="font-weight:500; margin:auto;">PRECIO 3</span>
                         </div>
                         <div class="tabla">
-                            <span style="margin:auto;">Precio 4</span>
+                            <span style="font-weight:500; margin:auto;">PRECIO 4</span>
                         </div>
                     </v-col>
                     <v-col cols="4" class="px-0">
-                        <div class="tabla">
-                            <span style="margin:auto;">
-                                Sin IVA
+                        <div class="tabla" style="background:#d9eaff;">
+                            <span style="margin:auto; font-weight:500;">
+                                SIN IVA
                             </span>
                         </div>
                         <div class="tabla">
-                            <v-text-field style="margin:auto;" prefix="$" class="mx-6" v-model="product.price_one"></v-text-field>
+                            <v-text-field style="margin:auto;" prefix="$" class="mx-6" v-model="product.price"></v-text-field>
                         </div>
                         <div class="tabla">
                             <v-text-field style="margin:auto;" prefix="$" class="mx-6" v-model="product.price_two"></v-text-field>
@@ -70,13 +73,13 @@
                         </div>
                     </v-col>
                     <v-col cols="4" class="px-0">
-                        <div class="tabla">
-                            <span style="margin:auto;">
-                                Con IVA
+                        <div class="tabla" style="background:#d9eaff;">
+                            <span style="margin:auto; font-weight:500;">
+                                CON IVA
                             </span>
                         </div>
                         <div class="tabla">
-                            <v-text-field style="margin:auto;" prefix="$" v-model="iva.price_one" class="mx-6"></v-text-field>
+                            <v-text-field style="margin:auto;" prefix="$" v-model="iva.price" class="mx-6"></v-text-field>
                         </div>
                         <div class="tabla">
                             <v-text-field style="margin:auto;" prefix="$" v-model="iva.price_two" class="mx-6"></v-text-field>
@@ -93,41 +96,44 @@
             <v-col cols="6">
                 <v-row class="ma-0" style="border:solid 1px grey;">
                     <v-col cols="5" class="pa-0">
-                        <div class="tabla">
-                            <span style="margin:auto;">Costo</span>
+                        <div class="tabla" style="background:#d9eaff;">
+                            <span style="margin:auto; font-weight:500;">COSTO</span>
                         </div>
-                        <div class="tabla">
-                            <v-text-field style="margin:auto;" prefix="$" class="mx-6"></v-text-field>
-                        </div>
-                        <div class="tabla">
-                            <v-text-field style="margin:auto;" prefix="$" class="mx-6"></v-text-field>
-                        </div>
-                        <div class="tabla">
-                            <v-text-field style="margin:auto;" prefix="$" class="mx-6"></v-text-field>
-                        </div>
-                        <div class="tabla">
-                            <v-text-field style="margin:auto;" prefix="$" class="mx-6"></v-text-field>
+                        <div class="tabla" style="height:360px!important;">
+                            <v-text-field style="margin:auto;" v-model="product.cost" prefix="$" class="mx-6"></v-text-field>
                         </div>
                     </v-col>
                     <v-col cols="7" class="pa-0">
-                        <div class="tabla">
-                            <span style="margin:auto;">Utilidad</span>
+                        <div class="tabla" style="background:#d9eaff;">
+                            <span style="margin:auto; font-weight:500;">UTILIDAD</span>
                         </div>
                         <div class="tabla">
-                            <v-text-field style="margin:auto;" suffix="%" class="ml-6 mr-3"></v-text-field>
-                            <v-text-field style="margin:auto;" prefix="$" class="mr-6 ml-3"></v-text-field>
+                            <div style="margin:auto; text-align:center!important;">
+                                <span>{{((product.price*1)-(product.cost*1)).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                                <br/>
+                                <v-chip color="#e4e4e4" style="font-weight:500">{{((100/product.price)*((product.price*1)-(product.cost*1))).toFixed(2)}}%</v-chip>
+                            </div>
                         </div>
                         <div class="tabla">
-                            <v-text-field style="margin:auto;" suffix="%" class="ml-6 mr-3"></v-text-field>
-                            <v-text-field style="margin:auto;" prefix="$" class="mr-6 ml-3"></v-text-field>
+                            <div style="margin:auto; text-align:center!important;">
+                                <span>{{((product.price_two*1)-(product.cost*1)).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                                <br/>
+                                <v-chip color="#e4e4e4" style="font-weight:500">{{((100/product.price_two)*((product.price_two*1)-(product.cost*1))).toFixed(2)}}%</v-chip>
+                            </div>
                         </div>
                         <div class="tabla">
-                            <v-text-field style="margin:auto;" suffix="%" class="ml-6 mr-3"></v-text-field>
-                            <v-text-field style="margin:auto;" prefix="$" class="mr-6 ml-3"></v-text-field>
+                            <div style="margin:auto; text-align:center!important;">
+                                <span>{{((product.price_three*1)-(product.cost)).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                                <br/>
+                                <v-chip color="#e4e4e4" style="font-weight:500">{{((100/product.price_three)*((product.price_three*1)-(product.cost*1))).toFixed(2)}}%</v-chip>
+                            </div>
                         </div>
                         <div class="tabla">
-                            <v-text-field style="margin:auto;" suffix="%" class="ml-6 mr-3"></v-text-field>
-                            <v-text-field style="margin:auto;" prefix="$" class="mr-6 ml-3"></v-text-field>
+                            <div style="margin:auto; text-align:center!important;">
+                                <span>{{((product.price_four*1)-(product.cost*1)).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                                <br/>
+                                <v-chip color="#e4e4e4" style="font-weight:500">{{((100/product.price_four)*((product.price_four*1)-(product.cost*1))).toFixed(2)}}%</v-chip>
+                            </div>
                         </div>
                     </v-col>
                 </v-row>
@@ -143,7 +149,7 @@
             <!-- Header -->
             <template v-slot:top>
                 <v-toolbar flat >
-                    <v-toolbar-title>Compras</v-toolbar-title>
+                    <v-toolbar-title>Historial de Compras</v-toolbar-title>
                 </v-toolbar>
             </template>
             <!-- Tabla sin información -->
@@ -152,15 +158,19 @@
             </template>
             <!-- Proveedor -->
             <template v-slot:[`item.shopping.provider`]="{ item }">
-                <v-list-item class="px-0" style="min-height:0px!important; font-size:14px;" :to="{ path: '/shoppings/'+ item.shopping.provider}">{{item.shopping.provider}}</v-list-item>
+                <v-list-item class="px-0" style="min-height:0px!important; font-size:14px;" :to="{ path: '/providers/'+ item.shopping.provider.id}">{{item.shopping.provider.name}}</v-list-item>
             </template>
             <!-- Compra -->
             <template v-slot:[`item.shopping.id`]="{ item }">
                 <v-list-item class="px-0" style="min-height:0px!important; font-size:14px;" :to="{ path: '/shoppings/'+ item.shopping.id}">{{item.shopping.id}}</v-list-item>
             </template>
             <!-- Costo -->
-            <template v-slot:[`item.cost`]="{ item }">
-                {{item.cost.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
+            <template v-slot:[`item.unit_cost`]="{ item }">
+                {{(item.unit_cost*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
+            </template>
+            <!-- Total -->
+            <template v-slot:[`item.total`]="{ item }">
+                {{(item.unit_cost*item.quantity).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
             </template>
         </v-data-table>
     </v-card>
@@ -171,6 +181,7 @@
 import axios from "axios"
 export default {
     data:()=>({
+        search:false,
         provider_id:'',
         newProduct:'',
         product_id:'',
@@ -180,16 +191,17 @@ export default {
             code_one:'',
             code_two:'',
             code_three:'',
-            price_one:0,
+            price:0,
             price_two:0,
             price_three:0,
             price_four:0,
             sat_key_code:'',
             provider:'',
-            item_shopping_details:undefined
+            item_shopping_details:undefined,
+            cost:0
         },
         iva:{
-            price_one:0,
+            price:0,
             price_two:0,
             price_three:0,
             price_four:0
@@ -213,31 +225,32 @@ export default {
         },
         searchProducts(val){
             //if (this.companyLists.length > 0) return
-            if (this.isLoadingProducts) return
-            this.isLoadingProducts = true
-            axios.get(process.env.VUE_APP_BACKEND_ROUTE + 'api/v2/item/pos?filter[pos]='+val)
-            .then(res => {
-                this.entries.products = res.data.data
-            }).finally(() => (this.isLoadingProducts = false))
+            //if(this.search){
+                if (this.isLoadingProducts) return
+                this.isLoadingProducts = true
+                axios.get(process.env.VUE_APP_BACKEND_ROUTE + 'api/v2/item/pos?filter[pos]='+val)
+                .then(res => {
+                    this.entries.products = res.data.data
+                }).finally(() => (this.isLoadingProducts = false, this.search = false))
+            //}
+            
         },
-        price_one:{
+        price:{
             handler: function (val, oldVal) {
                 if(val.iva!=oldVal.iva){
                     this.no_iva_pause = true
                 }else if(val.price!=oldVal.price){
                     this.iva_pause = true
                 }
-
                 if(!this.no_iva_pause){
                     this.iva_pause = true
-                    this.iva.price_one = (this.product.price_one*1.16).toFixed(2)
+                    this.iva.price = (this.product.price*1.16).toFixed(2)
                 }else{
                     this.no_iva_pause = false
                 }
-                
                 if(!this.iva_pause){
                     this.no_iva_pause = true
-                    this.product.price_one = (this.iva.price_one/1.16).toFixed(2)
+                    this.product.price = (this.iva.price/1.16).toFixed(2)
                 }else{
                     this.iva_pause = false
                 }
@@ -248,12 +261,13 @@ export default {
         header(){ return [
             { text: 'Fecha', value: 'shopping.date' },
             { text: 'Cantidad', value: 'quantity' },
-            { text: 'Costo', value: 'unit_cost' },
+            { text: 'Costo Unitario', value: 'unit_cost' },
+            { text: 'Total', value: 'total' },
             { text: 'Proveedor', value: 'shopping.provider' },
             { text: 'Compra', value: 'shopping.id' },
         ]},
-        price_one(){
-            return {price:this.product.price_one, iva:this.iva.price_one}
+        price(){
+            return {price:this.product.price, iva:this.iva.price}
         },
         productsList(){
             return this.entries.products.map(id => {
@@ -263,13 +277,14 @@ export default {
                     code_one:id.code_one,
                     code_two:id.code_two,
                     code_three:id.code_three,
-                    price_one:id.price_one,
+                    price:id.price,
                     price_two:id.price_two,
                     price_three:id.price_three,
                     price_four:id.price_four,
                     sat_key_code:id.sat_key_code,
                     provider:this.provider(id.latestShopping),
-                    item_shopping_details:id.item_shopping_details
+                    item_shopping_details:id.item_shopping_details,
+                    cost:this.cost(id.cost, id.latestShopping),
                 }
             })
         },
@@ -280,6 +295,13 @@ export default {
         },
     },
     methods:{
+        cost(cost, latest){
+            if(latest!=undefined){
+                return latest.unit_cost
+            }else{
+                return cost
+            }
+        },
         provider(latestShopping){
             if(latestShopping!=undefined){
                 return latestShopping.shopping.provider
@@ -298,12 +320,13 @@ export default {
                 code_one:id.code_one,
                 code_two:id.code_two,
                 code_three:id.code_three,
-                price_one:id.price_one,
+                price:id.price,
                 price_two:id.price_two,
                 price_three:id.price_three,
                 price_four:id.price_four,
                 sat_key_code:id.sat_key_code,
                 provider_id:this.provider_id,
+                cost:id.cost
             }})[0]
             axios.post(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/item/create", new_product).then(response=>{
                 this.$store.dispatch('provider/getProviders')
@@ -325,7 +348,7 @@ export default {
 .tabla{
     border: solid 1px grey!important;
     border-radius: 0px!important;
-    height:100px;
+    height:90px;
     display: flex!important;
 }
 </style>

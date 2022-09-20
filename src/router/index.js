@@ -20,6 +20,11 @@ const routes = [
     component: () => import('../components/leads/container.vue')
   },
   {
+    path: '/leads/:lead_id',
+    name: 'Leads',
+    component: () => import('../components/leads/container.vue')
+  },
+  {
     path: '/perro',
     name: 'Adjustments',
     component: () => import('../components/adjustments.vue')

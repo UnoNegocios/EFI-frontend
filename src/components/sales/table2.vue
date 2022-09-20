@@ -452,7 +452,7 @@
             <v-bottom-sheet  v-model="sheet" inset>
                 <v-sheet class="text-center" height="150px">
                     <div class="pt-6">
-                    ¿Seguro que deseas borrar esta cotizaión?
+                    ¿Seguro que deseas borrar esta venta?
                     </div>
                     <v-btn class="mt-4" text color="error" @click="deleteSale()">
                     Eliminar

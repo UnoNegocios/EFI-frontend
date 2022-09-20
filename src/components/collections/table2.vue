@@ -216,7 +216,7 @@ export default {
             { text: 'Factura/Remissión', value: 'sale.invoice' },
             { text: 'Deuda', value: 'due' },
             { text: 'Pago', value: 'amount' },
-            { text: 'Nueva Deuda', value: 'new_due' },
+            //{ text: 'Nueva Deuda', value: 'new_due' },
             { text: 'Serie', value: 'sale.type' },
         ],
     }),
