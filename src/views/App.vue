@@ -782,7 +782,7 @@
     <!-- header -->
     <v-app-bar class="elevation-0 px-0" :clipped-left="$vuetify.breakpoint.lgAndUp" app  color="#f4f5fa" dark><!-- box-shadow: 0px 0px 5px 0px rgb(112 112 115 / 30%)!important; -->
         <v-icon @click.stop="drawer = !drawer"  v-if="currentUser.name!='Felix'" class="mr-5" color="grey"> mdi-menu</v-icon>
-        <img style="height: 24px;" src="https://unocrm.mx/wp-content/uploads/2020/08/unocrm_logo-1.svg">
+        <img style="height: 24px;" src="/logo.png">
         <v-spacer></v-spacer>  
         <!-- search bar -->
         

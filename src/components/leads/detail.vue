@@ -141,7 +141,12 @@ export default {
     computed:{
         today(){
             return new Date().toLocaleString("sv-SE", {timeZone: "America/Monterrey"})
-        }
+        },
+        currentUser:{
+            get(){
+                return this.$store.state.currentUser.user
+            }
+        }  
     },
     methods:{
         pendiente(date){
@@ -175,7 +180,7 @@ export default {
             this.getActivities()
         },
         completeActivity(id){
-            axios.patch(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/calendars/" + id, {'completed':true}).then(response=>{
+            axios.patch(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/calendars/" + id, {'completed':true, 'last_updated_by_user_id' : this.currentUser.id}).then(response=>{
                 this.getActivities()
             })
         }
