@@ -1,6 +1,6 @@
 {
   "name": "UNOCRM",
-  "version": "4.1.52",
+  "version": "4.1.53",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -33,7 +33,7 @@
     "vuedraggable": "^2.24.3",
     "vuetify": "^2.2.11",
     "vuex": "^3.4.0",
-    "xlsx": "^0.16.9"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

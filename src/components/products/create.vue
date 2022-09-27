@@ -2,7 +2,7 @@
   <v-container>
     <v-card class="elevation-0 pa-6">
         <v-row class="ma-0">
-            <v-col cols="7">
+            <v-col cols="6" class="pt-3">
                 <v-autocomplete v-if="newProduct==''" v-model="product_id" :items="productsList" :loading="isLoadingProducts" :search-input.sync="searchProducts" item-text="name" item-value="id" label="Producto" placeholder="Escribe para buscar o crear">
                     <template slot="no-data">
                         <div class="px-6 pt-3" v-if="searchProducts!=null && !isLoadingProducts"><!--@keydown.enter="search=true"  ----  &&!isLoadingProducts&&!search-->
@@ -31,8 +31,22 @@
                     </template>
                 </v-autocomplete>
             </v-col>
-            <v-col cols="2">
+            <v-col cols="3">
+                <v-row class="ma-0">
                 <v-btn class="mt-3 elevation-0" color="primary" @click="saveProduct">Guardar</v-btn>
+                <v-spacer/>
+
+                <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn v-bind="attrs" v-on="on" class="mt-3 elevation-0" color="primary" text>
+                            Importar
+                            <v-icon>mdi-upload</v-icon>
+                        </v-btn>
+                    </template>
+                    <import-products @closeImportDialog="closeImportDialog"/>
+                </v-dialog>
+
+                </v-row>
             </v-col>
         </v-row>
         <v-row class="ma-0">
@@ -173,14 +187,20 @@
                 {{(item.unit_cost*item.quantity).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
             </template>
         </v-data-table>
+        
     </v-card>
   </v-container>
 </template>
 
 <script>
-import axios from "axios"
+import axios from "axios";
+import importProducts from "../products/import.vue"
 export default {
+    components:{
+        'import-products': importProducts
+    },
     data:()=>({
+        dialog:false,
         search:false,
         provider_id:'',
         newProduct:'',
@@ -295,6 +315,8 @@ export default {
         },
     },
     methods:{
+        
+
         cost(cost, latest){
             if(latest!=undefined){
                 return latest.unit_cost
@@ -339,7 +361,10 @@ export default {
             axios.patch(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/item/pos", this.product).then(response=>{
                 this.$store.dispatch('provider/getProviders')
             }) 
-        }
+        },
+        closeImportDialog: function(params) {
+            this.dialog = params;
+        },
     }
 }
 </script>
