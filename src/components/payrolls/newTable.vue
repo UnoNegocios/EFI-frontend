@@ -1,5 +1,5 @@
 <template>
-    <v-container class="pa-4">
+    <v-container class="pa-4" style="max-width:100vw;">
         <!-- Filtros -->
         <v-navigation-drawer style="top: 0px; max-height:100vh!important;" right v-model="filters" :clipped="$vuetify.breakpoint.lgAndUp" app>
             <filterPayrolls @filtersPayroll="filtersPayroll"/>

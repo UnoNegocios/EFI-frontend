@@ -1,306 +1,274 @@
 <template>
-    <v-container>
-        <!-- Filtros -->
-        <v-navigation-drawer style="top: 0px; max-height:100vh!important;" right v-model="filters" :clipped="$vuetify.breakpoint.lgAndUp" app>
-            <filter-cards @filterCards="filterCards"/>
-        </v-navigation-drawer>
-        <!-- Header -->
-        <v-toolbar flat class="px-4 pt-0 mb-6">
-            <v-toolbar-title class="mb-4" v-if="filterStorage()">
-                Totalizadores
-                <br/>
-                <span style="font-size:12px; color:grey; position: absolute;">Mes Actual</span>
-            </v-toolbar-title>
-            <v-toolbar-title class="mb-0" v-else>
-                Totalizadores
-            </v-toolbar-title>
-            <v-spacer/>
-            <v-btn icon class="ml-6" v-if="filterStorageLength== undefined" @click="openFilter()">
-                <v-icon>mdi-filter</v-icon>
-            </v-btn>
-             <v-btn icon class="ml-6" v-else @click="openFilter()">
-                <v-badge overlap color="primary">
-                    <template v-slot:badge>
-                        {{filterStorageLength}}
-                    </template>
-                    <v-icon>mdi-filter</v-icon>
-                </v-badge>
-            </v-btn>
-        </v-toolbar>
-        <!-- Cards -->
-        <div>
-            <strong>Ventas</strong>
-            <v-row class="ma-0 mb-4">
-                <v-col md="4" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading1">
-                            <v-icon x-small color="#47bdc6" class="mr-1">mdi-record</v-icon> 
-                            <span style="font-size:14px;"><strong>Subtotal</strong></span>
-                            <br/>{{(saleTotals.sum_subtotal*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(saleTotals.avg_subtotal*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
-                <v-col md="4" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading1">
-                            <v-icon x-small color="#ff6d00" class="mr-1">mdi-circle</v-icon> 
-                            <span style="font-size:14px;"><strong>IVA</strong></span>
-                            <br/>{{(saleTotals.sum_iva*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(saleTotals.avg_iva*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
-                <v-col md="4" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading1">
-                            <v-icon x-small color="#4385f3" class="mr-1">mdi-circle</v-icon> 
-                            <span style="font-size:14px;"><strong>Total</strong></span>
-                            <br/>{{(saleTotals.sum_total*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(saleTotals.avg_total*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
-            </v-row>
-            <strong>Cobranza</strong>
-            <v-row class="ma-0 mb-4">
-                <v-col md="4" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading2">
-                            <v-icon x-small color="#33a952" class="mr-1">mdi-circle</v-icon> 
-                            <span style="font-size:14px;"><strong>Cobrado</strong></span>
-                            <br/>{{(collectionTotals.collections_total_sum*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(collectionTotals.collections_total_avg*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
+    <v-row class="ma-0 mb-4" v-if="loading">
+        <v-col md="2" sm="6" class="px-2" v-for="(loader, index) in loaders" v-bind:key="index">
+            <v-card class="pb-2 pt-3 px-4 elevation-0">
+                <v-skeleton-loader type="text" width="40%"></v-skeleton-loader>
+                <v-skeleton-loader type="text" width="80%"></v-skeleton-loader>
+                <v-skeleton-loader type="text" width="80%"></v-skeleton-loader>
+            </v-card>
+        </v-col>
+    </v-row>
+    <div v-else>
+        <v-toolbar-title class="ml-2 mt-4"><strong>Ventas</strong></v-toolbar-title>
 
-                <v-col md="4" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading3">
-                            <v-icon x-small color="#fbbc04" class="mr-1">mdi-circle</v-icon> 
-                            <span style="font-size:14px;"><strong>Cuentas por Cobrar</strong></span>
-                            <br/>{{(pastDueTotals.sum_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(pastDueTotals.avg_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
-                
-                <v-col md="4" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading3">
-                            <v-icon x-small color="#ea4435" class="mr-1">mdi-circle</v-icon> 
-                            <span style="font-size:14px;"><strong>Cobranza Vencida</strong></span>
-                            <br/>{{(pastDueTotals.sum_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(pastDueTotals.avg_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
+        <v-row class="ma-0">
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0">
+                    <v-icon x-small color="#47bdc6" class="mr-1">mdi-record</v-icon> 
+                    <span style="font-size:12px;"><strong>Subtotal</strong></span>
+                    <br/>{{(totals.sum_subtotal*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_subtotal*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0">
+                    <v-icon x-small color="#ff6d00" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>IVA</strong></span>
+                    <br/>{{(totals.sum_iva*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_iva*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0">
+                    <v-icon x-small color="#4385f3" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Total</strong></span>
+                    <br/>{{(totals.sum_total*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_total*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0">
+                    <v-icon x-small color="#33a952" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Cobranza de Ventas</strong></span>
+                    <br/>{{(totals.sum_payments*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_payments*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0">
+                    <v-icon x-small color="#fbbc04" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Cuentas por Cobrar</strong></span>
+                    <br/>{{(totals.sum_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0">
+                    <v-icon x-small color="#ea4435" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Cobranza Vencida</strong></span>
+                    <br/>{{(totals.sum_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
+                    <!--br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span-->
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0">
+                    <v-icon x-small color="#2fc5ff" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Utilidad de Ventas</strong></span>
+                    <br/>{{(totals.sum_utilities*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_utilities*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0">
+                    <v-icon x-small color="#9c27b0" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Kilos Vendidos</strong></span>
+                    <br/>{{(totals.sum_weights*1).toFixed(2)}}
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_weights*1).toFixed(2)}}</strong></span>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0">
+                    <v-icon x-small color="#ea4435" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>En Credito</strong></span>
+                    <br/>{{(totals.sum_credito*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
+                    <!--br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span-->
+                </v-card>
+            </v-col>
+        </v-row>
 
-            </v-row>
-            <!--strong>Compras</strong>
-            <v-row class="ma-0 mb-4">
-                <v-col md="4" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading4">
-                            <v-icon x-small color="#47bdc6" class="mr-1">mdi-record</v-icon> 
-                            <span style="font-size:14px;"><strong>Subtotal</strong></span>
-                            <br/>{{(shoppingTotals.sum_subtotal*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(shoppingTotals.avg_subtotal*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
-                <v-col md="4" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading4">
-                            <v-icon x-small color="#ff6d00" class="mr-1">mdi-circle</v-icon> 
-                            <span style="font-size:14px;"><strong>IVA</strong></span>
-                            <br/>{{(shoppingTotals.sum_iva*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(shoppingTotals.avg_iva*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
-                <v-col md="4" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading4">
-                            <v-icon x-small color="#4385f3" class="mr-1">mdi-circle</v-icon> 
-                            <span style="font-size:14px;"><strong>Total</strong></span>
-                            <br/>{{(shoppingTotals.sum_total*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(shoppingTotals.avg_total*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
-            </v-row>
-            <strong>Pagos</strong>
-            <v-row class="ma-0 mb-4">
-                <v-col md="4" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading5">
-                            <v-icon x-small color="#33a952" class="mr-1">mdi-circle</v-icon> 
-                            <span style="font-size:14px;"><strong>Pagado</strong></span>
-                            <br/>{{(providerPaymentsTotals.collections_total_sum*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(providerPaymentsTotals.collections_total_avg*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
+        <v-toolbar-title class="ml-2 mt-4"><strong>Cobranza</strong></v-toolbar-title>
 
-                <v-col md="4" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading5">
-                            <v-icon x-small color="#fbbc04" class="mr-1">mdi-circle</v-icon> 
-                            <span style="font-size:14px;"><strong>Cuentas por Pagar</strong></span>
-                            <br/>{{(providerPaymentsTotals.sum_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(providerPaymentsTotals.avg_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
-                
-                <v-col md="4" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading5">
-                            <v-icon x-small color="#ea4435" class="mr-1">mdi-circle</v-icon> 
-                            <span style="font-size:14px;"><strong>Pagos Vencidos</strong></span>
-                            <br/>{{(providerPaymentsTotals.sum_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(providerPaymentsTotals.avg_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
+        <v-row class="ma-0">
+            <v-col md="4" sm="6" class="px-2" v-for="(total, index) in collections_totals" v-bind:key="index">
+                <v-card class="py-2 px-4 elevation-0">
+                    <v-row class="ma-0 my-2">
+                        <v-icon x-small :color="colors[index]" class="mr-1">mdi-circle</v-icon> 
+                        <span style="font-size:12px;"><strong>{{total.method}}</strong></span>
+                        <v-spacer></v-spacer>
+                        <span style="font-size:12px; color:grey;">Total:<strong>{{(total.total).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                    </v-row>
+                    <span style="font-size:13px;">Serie A: </span>
+                    <strong>{{(total.sum_serie_a).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong>
+                    <br/>
+                    <span style="font-size:13px;">Serie B: </span>
+                    <strong>{{(total.sum_serie_b).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong>
+                </v-card>
+            </v-col>
+        </v-row>
 
-            </v-row>
-            <strong>Iventario</strong>
-            <v-row class="ma-0 mb-4">
-                <v-col md="6" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading5">
-                            <v-icon x-small color="#33a952" class="mr-1">mdi-circle</v-icon> 
-                            <span style="font-size:14px;"><strong>Valor Mes Anterior </strong></span>
-                            <br/>{{(providerPaymentsTotals.collections_total_sum*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(providerPaymentsTotals.collections_total_avg*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
+        <v-toolbar-title class="ml-2 mt-4"><strong>Inventario</strong></v-toolbar-title>
 
-                <v-col md="6" class="px-2">
-                    <v-card class="py-4 px-4 elevation-0">
-                        <div v-if="!loading5">
-                            <v-icon x-small color="#fbbc04" class="mr-1">mdi-circle</v-icon> 
-                            <span style="font-size:14px;"><strong>Valor Actual</strong></span>
-                            <br/>{{(providerPaymentsTotals.sum_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                            <br/><span style="font-size:14px; color:grey;">Promedio:<strong>{{(providerPaymentsTotals.avg_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
-                        </div>
-                        <div class="text-center" v-else>
-                            <v-progress-circular indeterminate class="my-5" color="grey"></v-progress-circular>
-                        </div>
-                    </v-card>
-                </v-col>
+        <v-row class="ma-0">
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0" disabled>
+                    <v-icon x-small color="#ea4435" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Costo</strong></span>
+                    <br/><span>{{intentoryReport.total_inventory_cost}}</span>
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{intentoryReport.avg_inventory_cost}}</strong></span>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0" disabled>
+                    <v-icon x-small color="#47bdc6" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Kilos</strong></span>
+                    <br/><span>{{intentoryReport.total_inventory}}</span>
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{intentoryReport.avg_inventory}}</strong></span>
+                </v-card>
+            </v-col>
+        </v-row>
 
-            </v-row-->
-        </div>
-    </v-container>
+        <v-toolbar-title class="ml-2 mt-4"><strong>Gastos</strong></v-toolbar-title>
+
+        <v-row class="ma-0">
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0" disabled>
+                    <v-icon x-small color="#ea4435" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Total</strong></span>
+                    <br/><span>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                    <br/>
+                    <span style="font-size:12px;">Serie A: </span>
+                    <strong style="font-size:13px;">{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong>
+                    <br/>
+                    <span style="font-size:12px;">Serie B: </span>
+                    <strong style="font-size:13px;">{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0" disabled>
+                    <v-icon x-small color="#ea4435" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Pagado</strong></span>
+                    <br/><span>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                    <br/>
+                    <span style="font-size:12px;">Serie A: </span>
+                    <strong style="font-size:13px;">{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong>
+                    <br/>
+                    <span style="font-size:12px;">Serie B: </span>
+                    <strong style="font-size:13px;">{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0" disabled>
+                    <v-icon x-small color="#ea4435" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Pendiente</strong></span>
+                    <br/><span>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                    <br/>
+                    <span style="font-size:12px;">Serie A: </span>
+                    <strong style="font-size:13px;">{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong>
+                    <br/>
+                    <span style="font-size:12px;">Serie B: </span>
+                    <strong style="font-size:13px;">{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong>
+                </v-card>
+            </v-col>
+        </v-row>
+
+        <v-toolbar-title class="ml-2 mt-4"><strong>Compras</strong></v-toolbar-title>
+
+        <v-row class="ma-0">
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0" disabled>
+                    <v-icon x-small color="#47bdc6" class="mr-1">mdi-record</v-icon> 
+                    <span style="font-size:12px;"><strong>Subtotal</strong></span>
+                    <br/><span>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0" disabled>
+                    <v-icon x-small color="#ff6d00" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>IVA</strong></span>
+                    <br/><span>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0" disabled>
+                    <v-icon x-small color="#ff6d00" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>ISR</strong></span>
+                    <br/><span>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0" disabled>
+                    <v-icon x-small color="#4385f3" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Total</strong></span>
+                    <br/><span>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0" disabled>
+                    <v-icon x-small color="#4385f3" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Pagado</strong></span>
+                    <br/><span>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                </v-card>
+            </v-col>
+            <v-col md="4" sm="6" class="px-2">
+                <v-card class="py-2 px-4 elevation-0" disabled>
+                    <v-icon x-small color="#4385f3" class="mr-1">mdi-circle</v-icon> 
+                    <span style="font-size:12px;"><strong>Pendiente</strong></span>
+                    <br/><span>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                    <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                </v-card>
+            </v-col>
+        </v-row>
+
+    </div>
 </template>
 
 <script>
-import FilterCards from "../reports/filterCards"
+
 export default {
-    components: {
-        'filter-cards':FilterCards,
-    }, 
+    props:{
+        company:String
+    },
     data: () => ({
-        count:0,
-        filters: false,
-        filterStorageLength:undefined
+        loaders:['loader-1', 'loader-2', 'loader-3', 'loader-4', 'loader-5', 'loader-6'],
+        colors:['#47bdc6', '#ff6d00', '#4385f3', '#33a952'],
     }),
     created(){
-        this.$store.dispatch('cards/getSaleTotals')
-        this.$store.dispatch('cards/getPastDueTotals')
-        this.$store.dispatch('cards/getCollectionTotals')
-        this.$store.dispatch('cards/getProviderPaymentsTotals')
-        this.$store.dispatch('cards/getShoppingTotals')
+        this.$store.dispatch('quotation/getTotals')
+        this.$store.dispatch('collection/getTotals')
     },
     computed:{
-        shoppingTotals(){
-            return this.$store.state.cards.shopping_totals
+        totals(){
+            return this.$store.state.quotation.totals
         },
-        providerPaymentsTotals(){
-            return this.$store.state.cards.provider_payment_totals
+        loading(){
+            return this.$store.state.quotation.total_loader
         },
-        saleTotals(){
-            return this.$store.state.cards.sale_totals
+        intentoryReport(){
+            return this.$store.state.item.intentoryReport
         },
-        saleTotals(){
-            return this.$store.state.cards.sale_totals
+        collections_totals(){
+            var perro = this.$store.state.collection.totals
+            return perro
         },
-        collectionTotals(){
-            return this.$store.state.cards.collection_totals
+        loading(){
+            return this.$store.state.collection.total_loader
         },
-        pastDueTotals(){
-            return this.$store.state.cards.past_due_totals
+        sumTotals(){
+            var sum = 0
+            var totals = this.totals
+            for(var i=0; i<totals.length; i++){
+                sum = sum + totals[i].total
+            }
+            return sum
         }
     },
     methods:{
-        openFilter(){
-            if(this.filters == false){
-                this.$emit("closeDrawer", false);
-                this.filters = true
-            }else{
-                this.$emit("closeDrawer", true);
-                this.filters = false
-            }
-        },
-        filterCards: function(params) {
-            this.filterStorageLength = localStorage.getItem('filtersCardsLength')
-            this.$store.dispatch('cards/getSaleTotals')
-            this.$store.dispatch('cards/getPastDueTotals')
-            this.$store.dispatch('cards/getCollectionTotals')
-            this.$store.dispatch('cards/getProviderPaymentsTotals')
-            this.$store.dispatch('cards/getShoppingTotals')
-        },
-        filterStorage(){
-            if(localStorage.getItem('filtersCardsLength')!=null){
-                false
-            }else{
-                return true
-            }
-        },
+             
     }
 }
 </script>

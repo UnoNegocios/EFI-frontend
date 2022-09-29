@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="show">
+  <v-container v-if="show" style="max-width:100vw;">
         <v-data-table :loading="loading" :headers="headers" :items="clients" class="elevation-0 px-6 py-4">
             <template v-slot:top>
                 <v-toolbar flat >
@@ -43,6 +43,15 @@
                 </v-container>
             </template> 
         </v-data-table>
+  </v-container>
+  <v-container v-else class="px-12 mt-12">
+    <v-progress-linear
+        color="primary"
+        indeterminate
+        rounded
+        class="mt-12"
+        height="6"
+        ></v-progress-linear>
   </v-container>
 </template>
 

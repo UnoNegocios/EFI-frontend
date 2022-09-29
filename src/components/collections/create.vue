@@ -414,30 +414,22 @@
                 return perro
             },
             due(id, total){
-                var collections = this.$store.state.collection.collections.filter(collection=>collection.company_id == this.collection.company_id).map(collection=>collection.salesID)
+                var collections = this.$store.state.collection.collection_details.filter(collection=>collection.sale.id == id)
                 var sum = 0
-                var collections2 = []
-                for(var j=0; j<collections.length; j++){
-                    var collections2 = collections[j]
-                    for(var i=0; i<collections2.length; i++){
-                        if(collections2[i].id == id){
-                            sum = (sum*1) + (collections2[i].amount*1)
-                        }
-                    }
+                for(var i=0; i<collections.length; i++){
+                    sum = (sum*1) + (collections[i].amount*1)
                 }
                 return ((total*1) - (sum*1))
             },
             newDue(id, total){
-                var collections = this.$store.state.collection.collections.filter(collection=>collection.company_id == this.collection.company_id).map(collection=>collection.salesID)        
+                //console.log(id)
+                var collections = this.$store.state.collection.collection_details.filter(collection=>collection.sale.id == id)
+                //console.log(collections)
                 var sum = 0
-                for(var j=0; j<collections.length; j++){
-                    var collections2 = collections[j]
-                    for(var i=0; i<collections2.length; i++){
-                        if(collections2[i].id == id){
-                            sum = (sum*1) + (collections2[i].amount*1)
-                        }
-                    }
+                for(var i=0; i<collections.length; i++){
+                    sum = (sum*1) + (collections[i].amount*1)
                 }
+                //console.log(sum)
                 for(var i=0; i<this.selected.length; i++){
                     if(this.selected[i].id==id){
                         sum = (sum*1) + (this.selected[i].amount*1)

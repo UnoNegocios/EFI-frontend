@@ -1,7 +1,7 @@
 
 
 <template>       
-    <v-container>
+    <v-container style="max-width:100vw;">
         <v-data-table expand-icon :headers="headers" :items="rawMaterial" class="elevation-0 mx-6 py-6 px-10">
             <template v-slot:top>
                 <v-toolbar flat class="">

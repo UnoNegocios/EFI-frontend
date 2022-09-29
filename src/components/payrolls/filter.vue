@@ -160,6 +160,7 @@
                 job_position:'',
                 date:[],
             },
+            localStorage.removeItem("filtersPayrollsLength")
             localStorage.removeItem("filtersPayroll")
             localStorage.removeItem("selectorFiltersPayrolls")
             this.$nextTick(() => {
