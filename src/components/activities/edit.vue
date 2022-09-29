@@ -184,7 +184,7 @@ import CreateCompany from "../clients/companies/create"
             this.calendar.date = this.calendar.only_date + ' ' + this.calendar.only_time
             this.gris = true
             this.$nextTick(() => {
-                axios.put(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/calendar/update",Object.assign(this.calendar)).then(response=>{
+                axios.put(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/calendars/" + this.calendar.id,Object.assign(this.calendar)).then(response=>{
                     this.close()
                 }).catch(error => {
                     this.snackbar = {

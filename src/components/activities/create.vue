@@ -301,7 +301,7 @@ import CreateCompany from "../clients/companies/create"
                 this.calendar.last_updated_by_user_id = this.currentUser.id
                 this.calendar.date = this.calendar.only_date + ' ' + this.calendar.only_time
                 this.$nextTick(() => {
-                    axios.post(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/calendar/create",Object.assign(this.calendar)).then(response=>{
+                    axios.post(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/calendars",Object.assign(this.calendar)).then(response=>{
                         this.close()
                     }).catch(error => {
                         this.snackbar = {
