@@ -101,7 +101,7 @@ export default {
             { text: 'Codigo 1', value: 'code_one', type: 'string, number' },
             { text: 'Codigo 2', value: 'code_two', type: 'string, number' },
             { text: 'Codigo 3', value: 'code_three', type: 'string, number' },
-            { text: 'Precio 1', value: 'price_one', type: 'number' },
+            { text: 'Precio 1', value: 'price', type: 'number' },
             { text: 'Precio 2', value: 'price_two', type: 'number' },
             { text: 'Precio 3', value: 'price_three', type: 'number' },
             { text: 'Precio 4', value: 'price_four', type: 'number' },

@@ -1,11 +1,11 @@
 import axios from "axios"
 const state = {
     items:[],
-    intentoryReport:{
+    reports:{
         total_inventory_cost: '',
         total_inventory: '',
         avg_inventory_cost: '',
-        avg_inventory: ''
+        avg_inventory: '',
     },
 };
 
@@ -19,13 +19,13 @@ const actions = {
 
             commit('setItems', response.data);
 
-            state.intentoryReport.total_inventory_cost = response.data.reduce((a, b) => (a*1) + ((b['cost'] || 0)*1), 0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})
+            state.reports.total_inventory_cost = response.data.reduce((a, b) => (a*1) + ((b['cost'] || 0)*1), 0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})
 
-            state.intentoryReport.total_inventory = response.data.reduce((a, b) => (a*1) + ((b['inventory'] || 0)*1), 0).toFixed(2) + ' kg'
+            state.reports.total_inventory = response.data.reduce((a, b) => (a*1) + ((b['inventory'] || 0)*1), 0).toFixed(2) + ' kg'
 
-            state.intentoryReport.avg_inventory_cost = response.data.reduce((a, b) => (a*1) + ((b['cost'] || 0)*1), 0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})
+            state.reports.avg_inventory_cost = response.data.reduce((a, b) => (a*1) + ((b['cost'] || 0)*1), 0).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})
 
-            state.intentoryReport.avg_inventory = response.data.reduce((a, b) => (a*1) + ((b['inventory'] || 0)*1), 0).toFixed(2) + ' kg'
+            state.reports.avg_inventory = response.data.reduce((a, b) => (a*1) + ((b['inventory'] || 0)*1), 0).toFixed(2) + ' kg'
 
         });
     }

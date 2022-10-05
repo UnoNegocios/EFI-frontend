@@ -10,7 +10,8 @@ const state = {
     quotation_items:[],
     only_quotations:[],
     orders:[],
-    dispatched_sales:[]
+    dispatched_sales:[],
+    reports:[]
 };
 const getters = {};
 
@@ -121,7 +122,14 @@ const actions = {
                 commit('setOrders', response.data );
             })
         }
-    }
+    },
+    getReports( {commit}, dates ){
+        axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/sale/totals"+'?filter[date_between]='+dates)
+        .then(response => {
+            state.total_loader = false
+            commit('setReports', response.data);
+        });
+    },
 };
 
 const mutations = {
@@ -145,6 +153,9 @@ const mutations = {
     },
     setTotals(state, data){
         state.totals = data;
+    },
+    setReports(state, data){
+        state.reports = data;
     },
     setQuoationItems(state, data){
         state.quotation_items = data;

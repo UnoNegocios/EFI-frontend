@@ -1,6 +1,7 @@
 import axios from "axios";
 const state = {
     expenses:[],
+    reports:[]
 };
 const getters = {};
 
@@ -11,7 +12,14 @@ const actions = {
         .then(response => {
             commit('setExpenses', response.data);
         });
-    }
+    },
+    getReports( {commit}, dates ){
+        axios.get(process.env.VUE_APP_BACKEND_ROUTE)
+        .then(response => {
+            state.total_loader = false
+            commit('setReports', response.data);
+        });
+    },
 };
 
 const mutations = {

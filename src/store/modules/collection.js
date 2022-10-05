@@ -5,6 +5,7 @@ const state = {
     new_collections:[],
     totals:[],
     total_loader:false,
+    reports:[]
 };
 const getters = {};
 
@@ -62,6 +63,13 @@ const actions = {
         }
         //})
     },
+    getReports( {commit}, dates ){
+        axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/collection/totals"+'?filter[date_between]='+dates)
+        .then(response => {
+            commit('setReports', response.data.values);
+            state.total_loader = false
+        });
+    },
 };
 
 const mutations = {
@@ -76,6 +84,9 @@ const mutations = {
     },
     setTotals(state, data){
         state.totals = data;
+    },
+    setReports(state, data){
+        state.reports = data;
     },
 };
 

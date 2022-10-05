@@ -1,62 +1,43 @@
 <template>
     <v-container >
-        <v-row class="pl-5 pt-6">
-            <strong>Carrito ({{cartCount}})</strong>
+        <v-row class="ma-0 mt-2 pl-5">
+            <strong>cart ({{cartCount}})</strong>
         </v-row>
-
-        <!-- Articulos -->
-        <v-row  id="scroll-target" style="height: 40vh" class="overflow-y-auto">
-            <v-list class="pb-0">
-                <v-list-item v-for="(item,index) in cart" :key="index" style="border-bottom:1px solid #e0e0e0; margin-left:5px"> <!-- @click="" -->
-                    <v-list-item-avatar class="mt-0">
-                        <v-img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fbazarcuerna.mx%2Fproducts&psig=AOvVaw0kp0L4QgaPvUVRU7zL4Em5&ust=1602863137355000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCNDazNT4tuwCFQAAAAAdAAAAABAD"></v-img>
-                    </v-list-item-avatar>
-                    <v-list-item-content style="padding-top: 0px!important;">
-                        <v-row>
-                            <v-col col="11" style="padding-top: 28px!important; font-size: 16px!important;">
-                                <v-list-item-title style="font-size: 14px!important;">{{item.name}}</v-list-item-title>
-                                <div>{{(item.price).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</div>
-                            </v-col>
-                            <v-col col="1">
-                                <!--v-text-field style="width:40px!important" type="number"></v-text-field-->
-                                <v-btn icon @click="removeItem(index)"><v-icon>  mdi-close </v-icon></v-btn>
-                            </v-col>
+        <v-row  id="scroll-target" style="height: 80vh;  overflow-x:hidden;" class="overflow-y-auto">
+            <v-list class="pb-0" style="max-width: 250px;">
+                <v-list-item v-for="(item,index) in StoreCart" :key="index" style="border-bottom:1px solid #e0e0e0; margin-left:5px">
+                    <v-list-item-content style="padding-top: 10px!important;">
+                        <div style="font-size: 15px!important; font-weight:500;"> {{item.product.name}}</div>
+                        <div style="font-size: 14px!important;">c/u = {{(productPrice(item.product)*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</div>
+                        <!--div style="font-size: 14px!important;">subtotal = {{(productPrice(item.product) * item.quantity).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</div-->
+                        <v-row class="ma-0 px-2" style="background: #ecedf3; padding-top: 4px; border-radius: 5px; margin-top: 4px!important;">
+                            <v-btn style="margin-top:-4px;" class="mr-4" icon small @click="downItem(index)">
+                                <v-icon small>  mdi-minus </v-icon>
+                            </v-btn>
+                            ({{item.quantity}})
+                            <v-btn style="margin-top:-4px;" class="ml-4" icon small @click="upItem(item.product.id, index)">
+                                <v-icon small>  mdi-plus </v-icon>
+                            </v-btn>
+                            <v-spacer/>
+                            <v-btn style="margin-top:-4px;" icon small @click="removeItem(index)">
+                                <v-icon small>  mdi-delete </v-icon>
+                            </v-btn>
                         </v-row>
                     </v-list-item-content>
                 </v-list-item>   
             </v-list>
         </v-row>
-
-        <!--Totales y boton de pago-->
         <v-row>
             <v-col class="total pa-0">
-                <v-card tile class="pa-6 pt-1">
-                    <v-autocomplete @keydown.enter="filter()" v-model="quotation.company_id" :items="companyLists" :loading="isLoadingCompany" :search-input.sync="searchCompanies" hide-no-data item-value="id" item-text="name" label="Empresa(s)" placeholder="Escribe para buscar" attach chips multiple>
-                        <template v-slot:item="{item, attrs, on}">
-                            <v-list-item v-on="on" v-bind="attrs">
-                                <v-list-item-content>
-                                    <v-list-item-title v-if="item.name!=null">
-                                        <span v-if="item.macro!=null">{{item.macro}}</span>{{item.name}}
-                                        <div v-if="item.razon_social!=null">
-                                            <span style="font-size:12px;">{{item.razon_social}}</span>
-                                        </div>
-                                    </v-list-item-title>
-                                    <v-list-item-title v-else-if="item.razon_social!=null">
-                                        {{item.razon_social}}
-                                    </v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
-                        </template> 
-                    </v-autocomplete>
-                    <strong>Sub-Total:</strong> {{(subtotal*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
+                <v-card tile class="pa-6">
+                    <strong>Sub-Total:</strong> {{subtotal}}
                     <br>
-                    <strong>IVA:</strong> {{(subtotal*.16).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
+                    <strong>IVA:</strong> {{iva}}
                     <br>
-                    <strong>Total:</strong> 
-                        <span>{{(suma).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</span>
+                    <strong>Total:</strong> {{subtotal+iva}}
                 </v-card>
-                <v-card tile color="#1776d1"><!-- # d71182 -->
-                    <v-list-item link @click="pagar()" dark>
+                <v-card tile color="primary"><!-- # d71182 -->
+                    <v-list-item link @click="dialogPago=true" dark>
                         <v-list-item-content style="color:white;"><!-- #32241c -->
                             <strong>PAGAR</strong>
                         </v-list-item-content>
@@ -65,8 +46,12 @@
             </v-col>
         </v-row>
 
-        <!-- Dialogo pago -->
-        <v-dialog v-model="dialogPay" max-width="720px">
+        <!-- Dialogo ticket -->
+        <v-dialog v-model="dialogTicket" max-width="350px">
+            <ticket @cerrar="cerrarTicket" v-bind:imprimir="ticket"></ticket>
+        </v-dialog> 
+        <!-- Dialogo ticket -->
+        <v-dialog v-model="dialogPago" max-width="720px">
             <v-card>
               <!-- Titulo -->
               <v-card-title>
@@ -78,7 +63,7 @@
                   <v-row>
                     <v-row class="form-group px-6 py-2" v-for="(metodo,k) in ticket.metodos" :key="k">
                         <v-col cols="5" class="py-0 my-0">
-                            <v-select :items="methodsList" v-model="metodo.metodo" label="Metodo de pago"></v-select>
+                            <v-select :items="metodosLists" v-model="metodo.metodo" item-value="id" item-text="method" label="Metodo de pago"></v-select>
                         </v-col>
                         <v-col cols="4" class="py-0 my-0">
                             <v-text-field v-model="metodo.monto" prefix="$" suffix="c/u" label="Monto"></v-text-field>
@@ -92,33 +77,27 @@
                 </v-container>
               </v-card-text>
               
-              <v-divider class="mx-12 my-6 mt-0"></v-divider>
+              <!--v-divider class="mx-12 my-6 mt-0"></v-divider>
               <div class="text-center">
-                <v-btn v-if="showDetails=='no'" color="grey" @click="showDetails='si'" text>Agendar Envío</v-btn>
-                <v-btn v-if="showDetails=='si'" color="grey" @click="showDetails='no'" text><v-icon> mdi-chevron-up</v-icon></v-btn>
+                <v-btn v-if="perro=='no'" color="grey" @click="perro='si'" text>Agendar Envío</v-btn>
+                <v-btn v-if="perro=='si'" color="grey" @click="perro='no'" text><v-icon> mdi-chevron-up</v-icon></v-btn>
               </div>
-              <!-- Notas -->
-              <v-card-subtitle class="pb-0" v-if="showDetails=='si'">
+              <v-card-subtitle class="pb-0" v-if="perro=='si'">
                 <h3><strong>Notas</strong></h3>
               </v-card-subtitle>
-              <v-card-text v-if="showDetails=='si'">
+              <v-card-text v-if="perro=='si'">
                 <v-container>
-                  <!-- Formulario -->
                   <v-row>
-                    <!-- Mensaje personalizado -->
                     <v-col cols="12" class="pt-0" sm="6" md="7">
                       <v-textarea v-model="ticket.comentario" label="Mensaje personalizado"></v-textarea>
                     </v-col>
-                    <!-- Fecha de entrega -->
                     <v-col cols="12" class="pt-0" sm="6" md="5">
-                        <!-- Dia -->
                         <v-menu v-model="menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px" >
                             <template v-slot:activator="{ on }">
-                            <v-text-field clearable required v-model="ticket.fecha.dia" label="Fecha de entrega" prepend-icon="mdi-calendar-blank" readonly v-on="on"></v-text-field>
+                            <v-text-field clearable required v-model="ticket.fecha.dia" label="Fecha de entrega" prepend-icon="event" readonly v-on="on"></v-text-field>
                             </template>
                             <v-date-picker color="primary" v-model="ticket.fecha.dia" @input="menu = false"></v-date-picker>
                         </v-menu>
-                        <!-- Hora -->
                         <v-menu ref="menu" v-model="menu2" :close-on-content-click="false" :nudge-right="40" :return-value.sync="menu2" transition="scale-transition" offset-y max-width="290px" min-width="290px">
                             <template v-slot:activator="{ on, attrs }">
                                 <v-text-field v-model="ticket.fecha.hora" label="Hora de entrega" prepend-icon="mdi-clock-time-four-outline" readonly v-bind="attrs" v-on="on"></v-text-field>
@@ -128,207 +107,132 @@
                     </v-col>
                   </v-row>
                 </v-container>
-              </v-card-text>
+              </v-card-text-->
               <!-- Cancelar y Guardar -->
               <v-card-actions>
+                <v-menu v-model="menu3" v-if="currentUser.id == 10 || currentUser.id == 1 || currentUser.id == 9" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px" >
+                    <template v-slot:activator="{ on }">
+                    <v-text-field clearable required v-model="ticket.fecha_de_creacion" label="Fecha de venta" prepend-icon="event" readonly v-on="on"></v-text-field>
+                    </template>
+                    <v-date-picker color="primary" v-model="ticket.fecha_de_creacion" @input="menu3 = false"></v-date-picker>
+                </v-menu>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" @click="cerrarTicket()" text >Cancelar</v-btn>
+                  <v-btn color="blue darken-1" @click="cerrarTicket()" text>Cancelar</v-btn>
                   <v-btn color="blue darken-1" @click="save()" text>Guardar</v-btn>
               </v-card-actions>
             </v-card>
         </v-dialog> 
-
-        <!-- Dialogo ticket -->
-        <v-dialog v-model="dialogTicket" max-width="350px">
-            <ticket @cerrar="cerrarTicket" v-bind:id="orden"></ticket>
-        </v-dialog> 
-
     </v-container>
 </template>
 
 <script>
 import axios from "axios";
+import Ticket from "../pos/Ticket"
 export default {
+    props:{
+        cliente:String,
+    },
+    components: {
+        'ticket':Ticket,
+    },
     data:()=>({
-        showDetails:'no',
-        dialogPay:false,
-        orden:'',
+        rebajo:'',
+        dialogPago:false,
         dialogTicket:false,
         menu:false,
         menu2:false,
+        menu3:false,
         ticket:{
-            contacto:'',
-            inputs:{
-                id:'',
-                cantidad:1,
-            },
-            valor:'',
-            vendedor:'',
-            estatus:'',
-            descuento:0,
-            iva:'',
-            metodos:[{
-                metodo:'',
-                monto:'',
-            }],
-            fecha:[{
-                dia:'',
-                hora:'',
-            }],
-            comentario:'',
-        },
-        quotation:{
-            company_id:null,
-            contact_id:'',
-            user_id:'',
-            amount:'',
-            pdf:'',
-            note:'',
-            items:[{
-                quantity:1,
-                item:'',
-                value:'',
-                price:'',
-                weight:'',
-            }],
-            bar:false,
-            status:'vendido',
-            subtotal:'',
-            date:'',
-            type:'',
-            iva:'',
-            total:'',
-            invoice:'',
-            printed:'',
-            created_by_user_id:'',
-            last_updated_by_user_id:'',
-            invoice_date:'',
-            due_date:''
-        },
-        entries:{
-            companies: []
-        },
-        isLoadingCompany: false,
-        searchCompanies: null,
+            
+        }
     }),
-    watch: {
-        searchCompanies(val){
-            //if (this.companyLists.length > 0) return
-            if (this.isLoadingCompany) return
-            this.isLoadingCompany = true
-            axios.get(process.env.VUE_APP_BACKEND_ROUTE + 'api/v2/company_p?filter[name]='+val)
-            .then(res => {
-                this.entries.companies = res.data.data
-            }).finally(() => (this.isLoadingCompany = false))
-        },
-    },
     computed: {
-        methodsList(){
+        metodosLists(){
             return this.$store.state.payment_method.payment_methods
         },
-        suma(){
-            return 1
-        },
-        companyLists(){
-            return this.entries.companies.map(id => {
-                return{
-                    id:id.id,
-                    macro:id.macro,
-                    name:id.name,
-                    razon_social:id.razon_social,
-                    //price_list:id.price_list.name
-                }
-            })
+        currentUser:{
+            get(){
+                return this.$store.state.currentUser.user;
+            }
         },
         StoreCart() {
             return this.$store.state.cart.carts
         },
         cartCount() {
-            return this.StoreCart.length;
+            var sum = 0
+            for(var i=0; i<this.StoreCart.length; i++){
+                sum = sum + this.StoreCart[i].quantity
+            }
+            return sum
         },
         subtotal: function(){
             var sum = 0;
-            this.cart.forEach(e => {
-                sum += Number(e.price);
+            this.StoreCart.forEach(e => {
+                sum += (Number(e.quantity*this.productPrice(e.product))/1.16);
             });
-            return sum.toFixed(2)
+            return sum.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})
         },
-        cart() {
-            return this.$store.state.cart.carts.map(cartitems => {
-                return this.$store.state.product.products.find(itemForSale => {
-                    return cartitems === itemForSale.id;
-                });
+        iva: function(){
+            var sum = 0;
+            this.StoreCart.forEach(e => {
+                sum += (Number(e.quantity*this.productPrice(e.product)))*.16;
             });
+            return sum.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})
         },
     },
     created(){
         this.$store.dispatch('currentUser/getUser')
-        this.$store.dispatch('item/getItems')
     },
     methods: {
-        cerrarTicket(){
-
-        },
-        pagar(){
-            this.ticket.metodos[0].monto = this.suma
-            this.dialogPay = true
+        productPrice(product){
+            console.log(product)
+            if(product.price > 0 && product.price != undefined && product.price != '' && product.price != null){
+                return product.price
+            }else{
+                if(product.price_one > 0 && product.price_one != undefined && product.price_one != '' && product.price_one != null){
+                    return product.price_one
+                }else{
+                    if(product.price_two > 0 && product.price_two != undefined && product.price_two != '' && product.price_two != null){
+                        return product.price_two
+                    }else{
+                        if(product.price_three > 0 && product.price_three != undefined && product.price_three != '' && product.price_three != null){
+                            return product.price_three
+                        }else{
+                            if(product.price_four > 0 && product.price_four != undefined && product.price_four != '' && product.price_four != null){
+                                return product.price_four
+                            }else{
+                                return 9999
+                            }
+                        }
+                    }
+                }
+            }
         },
         add(index) {
-            var sum = 0
-            var resultado = 0
-            this.ticket.metodos.forEach(e => {
-                sum += (Number(e.monto));
-            });
-            resultado = this.suma - sum
-            this.ticket.metodos.push({ metodo: '', monto: resultado.toFixed(2) });
+            this.ticket.metodos.push({ metodo: '', monto: '' });
         },
         remove(index) {
             this.ticket.metodos.splice(index, 1);
         },
         removeItem(index) {
-            this.$store.dispatch('carrito/removeItem', index);
+            this.$store.dispatch('cart/removeItem', index);
+        },
+        downItem(index) {
+            this.$store.dispatch('cart/downItem', index);
+        },
+        upItem(id, index) {
+            this.$store.dispatch('cart/upItem', {'id':id, 'index':index});
         },
         save(){
-            this.apagado = true
-            this.$nextTick(() => {
-                //rellena variables venta
-                var value = this.suma
-                this.ticket.iva = this.iva;
-                this.ticket.descuento = this.descuento;
+            
+            //axios.post('https://bdb.unocrm.mx/api/v1/venta/guardar',Object.assign(this.ticket)).then(resp => {
                 this.ticket.valor = value;
-                this.ticket.vendedor = this.currentUser.id;
-                this.ticket.contacto = this.cliente;
-                this.ticket.inputs = this.$store.state.carrito.carritos;
-                this.ticket.productos = this.ticket.inputs;
-                if(this.ticket.fecha.dia!=undefined){
-                    this.ticket.fecha = this.ticket.fecha.dia + ' ' +this.ticket.fecha.hora + ':00'
-                }else{
-                    this.ticket.fecha = ''
-                }
-                this.ticket.estatus = 'cerrado'
-                //actualiza el inventario
-                axios
-                .get(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/servicio/all")
-                .then(response => {
-                    var gato = response.data
-                    for(var i=0; i<this.ticket.inputs.length; i++){
-                        var perro = gato.filter(servicio=>servicio.id == this.ticket.inputs[i])[0]               
-                        if(this.currentUser.name == "Sucursal 1"){
-                            perro.inventario.arboleda = perro.inventario.arboleda - 1
-                        }
-                        if(this.currentUser.name == "Sucursal 2"){
-                            perro.inventario.plazavita = perro.inventario.plazavita - 1
-                        }
-                        axios.put(process.env.VUE_APP_BACKEND_ROUTE + 'api/v1/servicio/actualizar',Object.assign(perro))
-                    }
-                })
-                //guarda la venta
-                axios.post(process.env.VUE_APP_BACKEND_ROUTE + 'api/v1/venta/guardar',Object.assign(this.ticket)).then(resp => {
-                    this.ticket.valor = value;
-                    this.orden = resp.data.id;
-                    this.dialogTicket=true;
-                })
-            });
+                this.dialogTicket=true;
+            //})
+        },
+        cerrarTicket: function(params) {
+            this.dialogTicket=false;
+            location.reload();
         },
     },
 };
@@ -340,3 +244,13 @@ export default {
     bottom:0!important;
 }
 </style>
+
+
+precio mostrador -> 3
+precio mayoreo -> 1
+
+
+permiso venta precio menor que costo y producto en $0.00
+
+
+Todos los productos son con iva en ferreteria y en efi sin iva

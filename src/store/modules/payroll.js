@@ -3,6 +3,7 @@ const state = {
     payrolls:[],
     totals:[],
     total_loader:false,
+    reports:[]
 };
 const getters = {};
 
@@ -36,6 +37,12 @@ const actions = {
             })
         //}
     },
+    getReports( {commit}, date ){
+        axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/payroll/totals?filter[date_between]=" + date)
+        .then(response=>{
+            commit('setReports', response.data);
+        })
+    },
 };
 
 const mutations = {
@@ -44,6 +51,9 @@ const mutations = {
     },
     setTotals(state, data){
         state.totals = data;
+    },
+    setReports(state, data){
+        state.reports = data;
     },
 };
 

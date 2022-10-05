@@ -775,7 +775,7 @@
       </v-list>
       <template v-slot:append>
         <div style="color:#9ca3a5; font-size: 12px;" class="pa-2">
-          UNOCRM | v4.1.54 <v-icon> mdi-settings</v-icon>
+          UNOCRM | v4.1.55 <v-icon> mdi-settings</v-icon>
         </div>
       </template>
     </v-navigation-drawer>
@@ -804,6 +804,7 @@
           filled
           dense
           v-model="searchInput"
+          @keydown.enter="search()"
         ></v-text-field>
         <!-- home button -->
         <v-btn class="hidden-sm-and-down pa-0" icon to="/" link>
@@ -930,7 +931,8 @@ import Felix from "../components/orders/container"
     }),
     methods:{
       search(){
-        this.$store.dispatch('product/getProducts', {search:this.searchInput, items:12}) 
+        this.$store.commit('product/setSearchInput',this.searchInput) 
+        this.$store.dispatch('product/getProducts', 12) 
       },
       logIt (data) {
         //console.log('detected', data.codeResult.code)
@@ -1030,8 +1032,7 @@ import Felix from "../components/orders/container"
     },
     watch:{
       $route (to, from){
-        if(to.fullPath == "/pos"){
-          this.$store.dispatch('product/getProducts', {searchInput:this.searchInput, items:12}) 
+        if(to.fullPath == "/pos"){ 
           this.showSearch = true
         }else{
           this.showSearch = false

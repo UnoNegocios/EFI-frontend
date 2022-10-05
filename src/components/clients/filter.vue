@@ -110,10 +110,12 @@
         },
     },
     created () {
-        let params = JSON.parse(localStorage.getItem('filtersCompany'))
+        let params = JSON.parse(localStorage.getItem('selectorFiltersClients'))
+        console.log(params)
         if(params!=undefined){
             this.company = params
         }
+        console.log(this.company)
     },
     methods: {
         closeDatePicker(dates){
@@ -272,7 +274,9 @@
                 bank_account_number:'',
                 number:''
             },
+            localStorage.removeItem("selectorFiltersClients")
             localStorage.removeItem("filtersClient")
+            localStorage.removeItem("filtersClientsLength")
             this.$nextTick(() => {
                 this.$emit("filtersCompanies", 'perro');
             })
