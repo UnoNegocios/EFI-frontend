@@ -226,6 +226,10 @@
             <template v-slot:[`item.company_id`]="{ item }">
                 <v-list-item class="px-0" style="min-height:0px!important; font-size:14px;" :to="{ path: '/clients/client/'+ item.companyID}">{{item.company_id}}</v-list-item>
             </template>
+
+            <template v-slot:[`item.collections_date`]="{ item }">
+                <div v-for="(date, index) in item.collections_date" v-bind:key="index"><span>{{new Date(date).toLocaleString("sv-SE", {timeZone: "America/Monterrey"}).slice(0,10)}}</span><br/></div>
+            </template>
             <!-- Envio -->
             <template v-slot:[`item.shipping_date`]="{ item }">
                 <span v-if="item.shipping_date!=undefined&&item.shipping_date!=null">{{item.shipping_date}}</span>
@@ -695,6 +699,7 @@ export default {
             { text: 'IVA', value: 'iva' },
             { text: 'Total', value: 'total' },
             { text: 'Pagos', value: 'payments', sortable: false },
+            { text: 'Fecha(s) de Pago(s)', value: 'collections_date', sortable: false },
             { text: 'Adeudo', value: 'due_balance', sortable: false },
             { text: 'Saldo Vencido', value: 'past_due_balance', sortable: false },
             { text: 'Lista de Precios', value: 'price_list' },
@@ -890,6 +895,8 @@ export default {
                     direccion: id.company.attributes.address,
                     delivery_time: id.company.attributes.delivery_time,
                     macro:id.company.attributes.macro,
+
+                    collections_date:id.collections_date,
 
                     //contact:this.contact(id.contact),
                     user_id:this.salesman(id.company.attributes.user),
