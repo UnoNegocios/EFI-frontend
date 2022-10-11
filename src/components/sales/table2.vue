@@ -796,7 +796,7 @@ export default {
                 var total = 0
                 var link = ''
                 if(this.company!=undefined){
-                    link = link + 'filter[company_id]='+this.company+'&'
+                    link = link + 'filter[company_id]='+this.company+'&' 
                 }
                 if(localStorage.getItem('filtersSales')!=null&&this.$route.params.sale_id==undefined&&this.company==undefined){
                     link = link + JSON.parse(localStorage.getItem('filtersSales'))+'&'

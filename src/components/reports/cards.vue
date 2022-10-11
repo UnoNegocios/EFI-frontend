@@ -230,12 +230,20 @@
             <v-toolbar-title class="ml-2 mt-4"><strong>Envíos</strong></v-toolbar-title>
 
             <v-row class="ma-0">
-                <v-col md="4" sm="6" class="px-2" v-for="(total, index) in shipping_totals" v-bind:key="index">
+                <v-col md="4" sm="6" class="px-2">
                     <v-card class="py-2 px-4 elevation-0">
                         <v-icon x-small color="#47bdc6" class="mr-1">mdi-record</v-icon> 
-                        <span style="font-size:12px;"><strong>{{total.label}}</strong></span>
-                        <br/>{{(total.total*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                        <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(total.avg*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
+                        <span style="font-size:12px;"><strong>{{shipping_totals[0].label}}</strong></span>
+                        <br/>{{(shipping_totals[0].total*1).toFixed(2)}} Kms
+                        <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(shipping_totals[0].avg*1).toFixed(2)}} Kms</strong></span>
+                    </v-card>
+                </v-col>
+                <v-col md="4" sm="6" class="px-2">
+                    <v-card class="py-2 px-4 elevation-0">
+                        <v-icon x-small color="#47bdc6" class="mr-1">mdi-record</v-icon> 
+                        <span style="font-size:12px;"><strong>{{shipping_totals[1].label}}</strong></span>
+                        <br/>{{(shipping_totals[1].total*1).toFixed(2)}} Kgs
+                        <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(shipping_totals[1].avg*1).toFixed(2)}} Kgs</strong></span>
                     </v-card>
                 </v-col>
             </v-row>
