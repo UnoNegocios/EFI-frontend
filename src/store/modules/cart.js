@@ -7,7 +7,8 @@ Vue.use(Vuex);
 
 const state = {
     carts:[],
-    db_carts:[]
+    db_carts:[],
+    client:{}
 };
 const getters = {
 };
@@ -24,8 +25,14 @@ const actions = {
     upItem(context, props) {
         context.commit("UP_Item", props);
     },
+    selectClient({commit}, client) {
+        commit('setClient', client );
+    },
 };
 const mutations = {
+    setClient(state, data){
+        state.client = data;
+    },
     ADD_Item(state, item) {
         state.db_carts.push(item);
         if(state.carts.map(cart=>cart.product).includes(item)){

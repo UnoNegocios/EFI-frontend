@@ -50,65 +50,31 @@
         <v-dialog v-model="dialogTicket" max-width="350px">
             <ticket @cerrar="cerrarTicket" v-bind:imprimir="ticket"></ticket>
         </v-dialog> 
-        <!-- Dialogo ticket -->
+        <!-- Dialogo ticket>
         <v-dialog v-model="dialogPago" max-width="720px">
             <v-card>
-              <!-- Titulo -->
               <v-card-title>
                 <span class="headline">Metodo de Pago</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
-                  <!-- Formulario -->
                   <v-row>
-                    <v-row class="form-group px-6 py-2" v-for="(metodo,k) in ticket.metodos" :key="k">
+                    <v-row class="form-group px-6 py-2" v-for="(method,k) in ticket.methods" :key="k">
                         <v-col cols="5" class="py-0 my-0">
-                            <v-select :items="metodosLists" v-model="metodo.metodo" item-value="id" item-text="method" label="Metodo de pago"></v-select>
+                            <v-select :items="methodList" v-model="method.id" item-value="id" item-text="method" label="Metodo de pago"></v-select>
                         </v-col>
                         <v-col cols="4" class="py-0 my-0">
-                            <v-text-field v-model="metodo.monto" prefix="$" suffix="c/u" label="Monto"></v-text-field>
+                            <v-text-field v-model="method.amount" prefix="$" suffix="c/u" label="Monto"></v-text-field>
                         </v-col>
                         <v-col cols="2">
-                            <v-icon @click="remove(k)" v-show="k || ( !k && ticket.metodos.length > 1)" color="red">mdi-close</v-icon>
-                            <v-icon @click="add(k)" v-show="k == ticket.metodos.length-1" color="primary">mdi-plus</v-icon>
+                            <v-icon @click="remove(k)" v-show="k || ( !k && ticket.methods.length > 1)" color="red">mdi-close</v-icon>
+                            <v-icon @click="add(k)" v-show="k == ticket.methods.length-1" color="primary">mdi-plus</v-icon>
                         </v-col>
                     </v-row>
                   </v-row>
                 </v-container>
               </v-card-text>
-              
-              <!--v-divider class="mx-12 my-6 mt-0"></v-divider>
-              <div class="text-center">
-                <v-btn v-if="perro=='no'" color="grey" @click="perro='si'" text>Agendar Envío</v-btn>
-                <v-btn v-if="perro=='si'" color="grey" @click="perro='no'" text><v-icon> mdi-chevron-up</v-icon></v-btn>
-              </div>
-              <v-card-subtitle class="pb-0" v-if="perro=='si'">
-                <h3><strong>Notas</strong></h3>
-              </v-card-subtitle>
-              <v-card-text v-if="perro=='si'">
-                <v-container>
-                  <v-row>
-                    <v-col cols="12" class="pt-0" sm="6" md="7">
-                      <v-textarea v-model="ticket.comentario" label="Mensaje personalizado"></v-textarea>
-                    </v-col>
-                    <v-col cols="12" class="pt-0" sm="6" md="5">
-                        <v-menu v-model="menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px" >
-                            <template v-slot:activator="{ on }">
-                            <v-text-field clearable required v-model="ticket.fecha.dia" label="Fecha de entrega" prepend-icon="event" readonly v-on="on"></v-text-field>
-                            </template>
-                            <v-date-picker color="primary" v-model="ticket.fecha.dia" @input="menu = false"></v-date-picker>
-                        </v-menu>
-                        <v-menu ref="menu" v-model="menu2" :close-on-content-click="false" :nudge-right="40" :return-value.sync="menu2" transition="scale-transition" offset-y max-width="290px" min-width="290px">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field v-model="ticket.fecha.hora" label="Hora de entrega" prepend-icon="mdi-clock-time-four-outline" readonly v-bind="attrs" v-on="on"></v-text-field>
-                            </template>
-                            <v-time-picker v-if="menu2" v-model="ticket.fecha.hora" full-width @update:period="$refs.menu.save(ticket.fecha.hora)"></v-time-picker>
-                        </v-menu>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card-text-->
-              <!-- Cancelar y Guardar -->
+
               <v-card-actions>
                 <v-menu v-model="menu3" v-if="currentUser.id == 10 || currentUser.id == 1 || currentUser.id == 9" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px" >
                     <template v-slot:activator="{ on }">
@@ -121,7 +87,7 @@
                   <v-btn color="blue darken-1" @click="save()" text>Guardar</v-btn>
               </v-card-actions>
             </v-card>
-        </v-dialog> 
+        </v-dialog--> 
     </v-container>
 </template>
 
@@ -143,12 +109,38 @@ export default {
         menu2:false,
         menu3:false,
         ticket:{
-            
-        }
+            company_id:null,
+            user_id:'',
+            note:'',
+            items:[{
+                quantity:1,
+                item:'',
+                price:''
+            }],
+            status:'vendido',
+            bar:true,
+            subtotal:'',
+            date:'',
+            type:'',
+            iva:'',
+            total:'',
+            invoice:'',
+            created_by_user_id:'',
+            last_updated_by_user_id:'',
+        },
+
     }),
     computed: {
-        metodosLists(){
-            return this.$store.state.payment_method.payment_methods
+        methodList:{
+            get(){
+                var response = this.$store.state.payment_method.payment_methods
+                if(process.env.VUE_APP_BACKEND_ROUTE == "https://wowipes.com/"){
+                    return response.filter(method=>method.method != 'Tarjeta')
+                }else{
+                    return response
+                }
+                
+            }
         },
         currentUser:{
             get(){
@@ -185,7 +177,6 @@ export default {
     },
     methods: {
         productPrice(product){
-            console.log(product)
             if(product.price > 0 && product.price != undefined && product.price != '' && product.price != null){
                 return product.price
             }else{
@@ -209,10 +200,10 @@ export default {
             }
         },
         add(index) {
-            this.ticket.metodos.push({ metodo: '', monto: '' });
+            this.ticket.methods.push({ id: '', amount: '' });
         },
         remove(index) {
-            this.ticket.metodos.splice(index, 1);
+            this.ticket.methods.splice(index, 1);
         },
         removeItem(index) {
             this.$store.dispatch('cart/removeItem', index);
@@ -224,6 +215,26 @@ export default {
             this.$store.dispatch('cart/upItem', {'id':id, 'index':index});
         },
         save(){
+            this.ticket = {
+                company_id:null,
+                user_id:'',
+                note:'',
+                items:[{
+                    quantity:1,
+                    item:'',
+                    price:''
+                }],
+                status:'vendido',
+                bar:true,
+                subtotal:'',
+                date:'',
+                type:'',
+                iva:'',
+                total:'',
+                invoice:'',
+                created_by_user_id:'',
+                last_updated_by_user_id:'',
+            },
             
             //axios.post('https://bdb.unocrm.mx/api/v1/venta/guardar',Object.assign(this.ticket)).then(resp => {
                 this.ticket.valor = value;

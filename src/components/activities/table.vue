@@ -62,7 +62,7 @@
             </template >
             <!-- Creación -->
             <template v-slot:[`item.created_at`]="{ item }" style="padding:0px!important; margin:0px!important;">
-                {{item.created_at.slice(0, 10)}}
+                {{item.created_at}}
             </template>
 
             <!-- Empresa -->
@@ -71,7 +71,7 @@
             </template>
             <!-- Actualización -->
             <template v-slot:[`item.updated_at`]="{ item }">
-                {{item.updated_at.slice(0, 10)}}
+                {{item.updated_at}}
             </template>
             <!-- Tabla sin información -->
             <template v-slot:no-data>
@@ -262,8 +262,8 @@ export default {
                     completed: id.completed,
                     salesman: this.user(id.user),
                     user: this.user(id.created_by_user_id),
-                    created_at: id.created_at.slice(0,10),
-                    updated_at: id.updated_at.slice(0,10),
+                    created_at: id.created_at.slice(0,16),
+                    updated_at: id.updated_at.slice(0,16),
                     companyID: this.idClient(id.company),
                 }
             });

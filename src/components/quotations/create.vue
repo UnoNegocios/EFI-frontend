@@ -210,7 +210,6 @@ import axios from "axios";
                 company_id:null,
                 contact_id:'',
                 user_id:'',
-                amount:'',
                 pdf:'',
                 note:'',
                 items:[{
