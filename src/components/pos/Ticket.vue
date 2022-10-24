@@ -1,216 +1,95 @@
 <template>
-    <div class="text-center background">
+    <div class="">
         <div id="divName">  
             <v-card class="divName">
-                    <v-avatar size="100" class="my-4">
-                    
-                        <v-img src="/files/logo.png"></v-img>
-                    
-                    </v-avatar>
-                <div class="text-center">
-                    <h3>Ticket de Compra</h3>
+                <img width="150" src="/logo_unoferre.png"/>
+                <div class="fiscal">
+                    <strong>FERRETERIA EN LINEA S.A de C.V.</strong>
+                    <br/>
+                    AV. JOSE VASCONCELOS PONIENTE, COL. DEL VALLE, SAN PEDRO GARZA GARCÍA, NUEVO LEÓN, MÉXICO
                 </div>
-                <span v-if="imprimir.created_at!=null">{{new Date(imprimir.created_at).getFullYear(imprimir.created_at)+'-'+(new Date(imprimir.created_at).getMonth()+1)+'-'+new Date(imprimir.created_at).getDate() + ' ' + new Date(imprimir.created_at).getHours() + ":" + new Date(imprimir.created_at).getMinutes() + ":" + new Date(imprimir.created_at).getSeconds()}}</span>
-                <span v-else>{{new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() + ' ' + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds()}}</span>
-                <br><span style="font-size:13px;">Folio: {{imprimir.index}}</span>
-                <v-simple-table class="ma-6">
-                    <template v-slot:default>
-                        <thead>
-                            <tr>
-                                <th class="text-left">Cant.</th>
-                                <th class="text-left">Producto</th>
-                                <th v-if="regalo=='no'" class="text-left">$</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="input in imprimir.inputs" :key="input">
-                                <td class="text-left">1</td>
-                                <td class="text-left">{{ producto(input) }}</td>
-                                <td v-if="regalo=='no'" class="text-left">{{ valor(input).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',}) }}</td>
-                            </tr>
-                        </tbody>
-                    </template>
-                </v-simple-table>
-                <div v-if="regalo=='no'">
-                    <strong>Sub-Total:</strong>
-                    {{(imprimir.valor/1.16).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                    <br>
-                    <strong>Descuento:</strong> {{((imprimir.descuento)*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                    <a v-if="imprimir.iva!=0" style="color:black;">
-                    <br>
-                    <strong>IVA:</strong> {{((imprimir.iva)*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                    </a>
-                    <br>
-                    <strong>Total:</strong> {{((imprimir.valor*1)+(imprimir.descuento*1)).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                    <br><br>
+                <div class="user">
+                    {{currentDate()}}
+                    <br/>
+                    <strong># Ticket:</strong> {{ticket.id}}
+                    <br/>
+                    <strong>Atendió:</strong> {{currentUser.name}} {{currentUser.last}}
                 </div>
-                <div>
-                    <i>Gracias por su compra!!!</i>
-                    <br>
-                    <br>
-                    <i style="font-size:12px;">No hay devoluciones. <br>Garantía y Cambios máximo 15 días<br>* Aplican restricciones.</i>
+                <v-row class="products" v-for="(item, index) in cart" v-bind:key="index">
+                            
+                    <v-col cols="8">
+                        sku:{{item.product.code_one}} | {{item.product.name}} ({{item.quantity}})<!--{{item.product.unit}}<span v-if="(item.quantity*1)>1">s</span-->
+                    </v-col>
+                    
+                    <v-col cols="4" style="padding-left:10px!important;">
+                        <v-container fill-height fluid>
+                            <v-row align="center" justify="center">
+                                $
+                                <v-spacer/>
+                                {{(item.product.price).toFixed(2)}}
+                            </v-row>
+                        </v-container>
+                    </v-col>
+
+                </v-row>
+                <div class="totals">
+                    <v-row>
+                        <span>Subtotal M.N.</span>
+                        <v-spacer/>
+                        <span>${{ticket.subtotal.toFixed(2)}}</span>
+                    </v-row>
+                    <v-row>
+                        <span>IVA M.N.</span>
+                        <v-spacer/>
+                        <span>${{ticket.iva.toFixed(2)}}</span>
+                    </v-row>
+                    <v-row style="font-weight:600; font-size:14px;">
+                        <span>Total M.N.</span>
+                        <v-spacer/>
+                        <span>${{ticket.total.toFixed(2)}}</span>
+                    </v-row>
+                </div>
+                <div class="fiscal">
+                    Cuentanos como te atendimos ingrsando a https://unoferre.mx/contacto
+                    <br/>
+                    Línea Express WhatsApp: 81 2010 9550
+                    <br/>
+                    Línea Corporativa: 81 2470 0480
+                    <br/>
+                    Gracias por su compra
+                    
                 </div>
             </v-card>
         </div>  
-        <v-card-actions>
+        <v-card-actions style="background:white;">
             <v-btn color="blue darken-1" text @click="dalecandela('divName')">Imprimir</v-btn>
-            <v-btn color="blue darken-1" v-if="this.correo(this.imprimir.contacto)!=null&&this.correo(this.imprimir.contacto)!=''&&this.correo(this.imprimir.contacto)!=undefined" text @click="sendEmail()">Enviar</v-btn>
-            <v-btn color="blue darken-1" text @click="ticketRegalo('divName')">Ticket de Regalo</v-btn>
+            <!--v-btn color="blue darken-1" v-if="this.correo(this.imprimir.contacto)!=null&&this.correo(this.imprimir.contacto)!=''&&this.correo(this.imprimir.contacto)!=undefined" text @click="sendEmail()">Enviar</v-btn>
+            <v-btn color="blue darken-1" text @click="ticketRegalo('divName')">Ticket de Regalo</v-btn-->
         </v-card-actions>
     </div>
 </template>
 
 <script>
-    import emailjs from 'emailjs-com';
-    import{ init } from 'emailjs-com';
-    init("user_8a0ZvcQvBK8YSEM7Sades");
+    //import emailjs from 'emailjs-com';
+    //import{ init } from 'emailjs-com';
+    //init("user_8a0ZvcQvBK8YSEM7Sades");
     export default {
         props:{
-            id:Number
+            ticket:Object
         },
         data: () => ({
-            falso: false,
-            regalo:'no',
+            
         }),
         computed: { 
-            productos:{
-                get(){
-                    return this.$store.state.servicio.servicios;
-                }
+            currentUser(){
+                return this.$store.state.currentUser.user
             },
-            contactos:{
-                get(){
-                    return this.$store.state.contacto.contactos;
-                }
-            },
-            imprimir:{
-                get(){
-                    var perro = this.ventasSat.concat(this.ventasChanchuyescas).sort(function(a,b){
-                        return new Date(a.created_at) - new Date(b.created_at)
-                    }).map((id, index)=>{
-                        return{
-                            index: id.index,
-                            comentario: id.comentario,
-                            contacto: id.contacto,
-                            created_at: id.created_at,
-                            descripcion: id.descripcion,
-                            descuento: id.descuento,
-                            empresa: id.empresa,
-                            envio: id.envio,
-                            estatus: id.estatus,
-                            etapa: id.etapa,
-                            fecha: id.fecha,
-                            //folio: id.folio,
-                            id: index + 1,
-                            iva: id.iva,
-                            metodos: id.metodos,
-                            motivoderechazo: id.motivoderechazo,
-                            pdf: id.pdf,
-                            procedencia: id.procedencia,
-                            productos: id.productos,
-                            realizado: id.realizado,
-                            servicio: id.servicio,
-                            updated_at: id.updated_at,
-                            valor: id.valor,
-                            vendedor: id.vendedor,
-                        }
-                    }).sort(function(a,b){
-                        return new Date(b.created_at) - new Date(a.created_at)
-                    }).filter(venta=>venta.id == this.id)[0];
-                    return perro
-                }
-            },
-            ventasSat(){
-                var respuesta = this.ventasList
-                .filter(quotation => this.contiene(quotation.metodos) == true)
-                .sort(function(a,b){
-                return new Date(a.created_at) - new Date(b.created_at)
-                })
-                .map((id, index)=>{
-                return{
-                    index: 'T-' + (index+1),
-                    comentario: id.comentario,
-                    contacto: id.contacto,
-                    created_at: id.created_at,
-                    descripcion: id.descripcion,
-                    descuento: id.descuento,
-                    empresa: id.empresa,
-                    envio: id.envio,
-                    estatus: id.estatus,
-                    etapa: id.etapa,
-                    fecha: id.fecha,
-                    //folio: id.folio,
-                    id: id.id,
-                    iva: id.iva,
-                    metodos: id.metodos,
-                    motivoderechazo: id.motivoderechazo,
-                    pdf: id.pdf,
-                    procedencia: id.procedencia,
-                    productos: id.productos,
-                    realizado: id.realizado,
-                    servicio: id.servicio,
-                    updated_at: id.updated_at,
-                    valor: id.valor,
-                    vendedor: id.vendedor,
-                }
-                });
-                return respuesta
-            },
-            ventasChanchuyescas(){
-                var respuesta = this.ventasList
-                .filter(quotation => this.contiene(quotation.metodos) == false)
-                .sort(function(a,b){
-                return new Date(a.created_at) - new Date(b.created_at)
-                })
-                .map((id, index)=>{
-                return{
-                    index: 'E-' + (index+1),
-                    comentario: id.comentario,
-                    contacto: id.contacto,
-                    created_at: id.created_at,
-                    descripcion: id.descripcion,
-                    descuento: id.descuento,
-                    empresa: id.empresa,
-                    envio: id.envio,
-                    estatus: id.estatus,
-                    etapa: id.etapa,
-                    fecha: id.fecha,
-                    folio: id.folio,
-                    id: id.id,
-                    iva: id.iva,
-                    metodos: id.metodos,
-                    motivoderechazo: id.motivoderechazo,
-                    pdf: id.pdf,
-                    procedencia: id.procedencia,
-                    productos: id.productos,
-                    realizado: id.realizado,
-                    servicio: id.servicio,
-                    updated_at: id.updated_at,
-                    valor: id.valor,
-                    vendedor: id.vendedor,
-                }
-                });
-                return respuesta
-            },
-            ventasList:{
-                get(){
-                    return this.$store.state.venta.cerrados
-                }
+            cart() {
+                return this.$store.state.cart.carts
             },
         },
         methods:{
-            contiene(methods){
-                var found = false;
-                if(methods!=undefined){
-                    for(var i = 0; i < methods.length; i++) {
-                        if (methods[i].metodo == 'Tarjeta de Credito' || methods[i].metodo == 'Tarjeta de Debito') {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                return found
-            },
+            /*
             sendEmail() {
                 emailjs.send("service_kjstmjc","template_3o9pox9",{
                     fecha: this.fechita(),
@@ -228,39 +107,12 @@
                     this.sendEmail()
                 })
             },
-            losproductos(items){
-                var perro = ''
-                for (let i = 0; i < items.length; i++) {
-                        perro = perro + this.producto(items[i]) + ' ' + this.valor(items[i]).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',}) + '\n'
-                }
-                return perro
-            },
-            cliente(id) {
-                return this.contactos.filter(contacto => contacto.id === id).map(contacto => contacto.nombre)[0];
-            },
-            correo(id) {
-                return this.contactos.filter(contacto => contacto.id === id).map(contacto => contacto.email)[0];
-            },
-            producto(id) {
-                return this.productos.filter(producto => producto.id === id).map(producto => producto.servicio)[0];
-            },
-            valor(id) {
-                return this.productos.filter(producto => producto.id === id).map(producto => producto.valor)[0];
-            },
-            ticketRegalo(divName){
-                this.regalo = 'si'
-                this.$nextTick(() => {
-                    this.dalecandela(divName)
-                })
-            },
+            */
             dalecandela(divName) {
                 var printContents = document.getElementById(divName).innerHTML;
                 var originalContents = document.body.innerHTML;
                 document.body.innerHTML = printContents;
-
                 window.print();
-
-
                 this.$nextTick(() => {
                         var is_opera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
                         var is_Edge = navigator.userAgent.indexOf("Edge") > -1;
@@ -273,17 +125,7 @@
                         this.$emit("cerrarTicket", this.falso);
                         location.reload();
                     }
-
-                    
                 })
-
-                /*
-                this.$nextTick(() => {
-                    document.body.innerHTML = originalContents;
-                    this.$emit("cerrarTicket", this.falso);
-                    location.reload();
-                })
-                */
             },
             dalecandelamovil(divName) {
                 var printContents = document.getElementById(divName).innerHTML;
@@ -309,34 +151,61 @@
             cerrar(){
                 this.$emit("cerrar", 'hola');
             },
-            fechita(){
-                if(this.imprimir.created_at!=null){
-                    return new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date(this.imprimir.created_at).getDate() + ' ' + new Date(this.imprimir.created_at).getHours() + ":" + new Date(this.imprimir.created_at).getMinutes() + ":" + new Date(this.imprimir.created_at).getSeconds()
-                }else{
-                    return  new Date().getFullYear()+'-'+(new Date().getMonth()+1)+'-'+new Date().getDate() + ' ' + new Date().getHours() + ":" + new Date().getMinutes() + ":" + new Date().getSeconds()
-                }
+            currentDate(){
+            // Creamos el objeto fecha instanciándolo con la clase Date
+            const fecha = new Date()
+            console.log(fecha)
+            // Creamos array con los días de la semana
+            const dias_semana = ['Domingo', 'Lunes', 'martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            // Creamos array con los meses del año
+            const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            // Construimos el formato de salida
+            if(fecha.getUTCFullYear()!=new Date().getUTCFullYear()){
+                return dias_semana[fecha.getDay()] + ', ' + fecha.getDate() + ' de ' + meses[fecha.getMonth()] + ' a las ' + fecha.toLocaleString("sv-SE", {timeZone: "America/Monterrey"}).slice(10,16)
+            }else{
+                return dias_semana[fecha.getDay()] + ', ' + fecha.getDate() + ' de ' + meses[fecha.getMonth()] + ' de ' + fecha.getUTCFullYear() + ' a las ' + fecha.toLocaleString("sv-SE", {timeZone: "America/Monterrey"}).slice(10,16)
             }
+            
+        },
         }
     }
 </script>
 
 <style>
     .divName{
-        font-family: "Roboto", sans-serif!important;
+        font-family: revert!important;
+        text-transform: uppercase!important;
         text-align: center !important;
         padding: 30px 20px;
+        color:black!important;
     }
-    .background{
-        background-color: white!important;
+    .fiscal {
+        font-size: 12px;
+        margin: 15px 0px;
+    }
+    .products{
+        text-align: left !important;
+        font-size: 13px;
+        border-bottom:1px solid black;
+        margin:0px;
+    }
+    .products .col{
+        padding:10px 0px;
+    }
+    .user{
+        text-align: left !important;
+        font-size: 12px;
+        margin-bottom:15px;
+    }
+    .totals{
+        font-size: 13px;
+        margin:20px 0px 30px 0px;
+    }
+    .totals .row{
+        margin:0px;
     }
 </style>
 
 
 
 
-
-<!--
-compras@unonegocios.com -> 17/04/2020 11:55:10
-contabilidad@unonegocios.com -> 25/11/2020 13:14:49
-administracion@unonegocios.com -> 25/11/2020 13:14:14
--->

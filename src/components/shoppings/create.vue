@@ -190,14 +190,18 @@ export default {
     }),
     computed:{
         valid(){
-            if(process.env.VUE_APP_BACKEND_ROUTE == "https://suministros.uno/"){
-                if(this.editedItem.products[0].item_id!=''){
-                    return false
+            if(this.editedItem.provider_id!=''&&this.editedItem.provider_id!=null&&this.editedItem.provider_id!=undefined){
+                if(process.env.VUE_APP_BACKEND_ROUTE == "https://suministros.uno/"){
+                    if(this.editedItem.products[0].item_id!=''){
+                        return false
+                    }else{
+                        return true
+                    }
                 }else{
-                    return true
+                    return false
                 }
             }else{
-                return false
+                return true
             }
         },
         currentUser:{

@@ -29,11 +29,11 @@
 
         <v-row justify="center" class="ma-0">
             <v-col class="my-4 mx-0" v-for="(product,k) in products" :key="k" cols="4">
-                <v-card @click="addToCart(product)"><!--:disabled="product.inventory>0"-->
+                <v-card :disabled="!(product.price!=undefined || product.price>0)" @click="addToCart(product)"><!--:disabled="product.inventory>0"-->
                     <!--v-img height="150px" width="19vw" v-bind:src="liga + 'files/' + product.image"></v-img-->
-                    <v-card-subtitle class="pb-0">{{product.name}}</v-card-subtitle>
+                    <v-card-subtitle class="pb-0">SKU:{{product.code_one}} | {{product.name}}</v-card-subtitle>
                     <v-card-text class="text--primary">
-                        <div>{{(productPrice(product)*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</div>
+                        <div v-if="product.price!=undefined && product.price>0">{{product.price.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</div>
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -88,7 +88,15 @@ export default {
             return this.$store.state.cart.carts
         },
         products(){
-            return this.$store.state.product.products
+            return this.$store.state.product.products.map(id=>{
+                return{
+                    id:id.id,
+                    name:id.name,
+                    price:this.productPrice(id),
+                    //unit:id.unit.name,
+                    code_one:id.code_one
+                }
+            })
         },
         client(){
             console.log('perro')
@@ -105,28 +113,21 @@ export default {
             this.$store.dispatch("cart/addItem", id);
         },
         productPrice(product){
-            if(product.price > 0 && product.price != undefined && product.price != '' && product.price != null){
-                return product.price
+            if(this.client_id!=''){
+                var price = this.priceList(this.companyLists.filter(company=>company.id == this.client_id)[0].price_list.name)
+                return product[price]*1
             }else{
-                if(product.price_one > 0 && product.price_one != undefined && product.price_one != '' && product.price_one != null){
-                    return product.price_one
-                }else{
-                    if(product.price_two > 0 && product.price_two != undefined && product.price_two != '' && product.price_two != null){
-                        return product.price_two
-                    }else{
-                        if(product.price_three > 0 && product.price_three != undefined && product.price_three != '' && product.price_three != null){
-                            return product.price_three
-                        }else{
-                            if(product.price_four > 0 && product.price_four != undefined && product.price_four != '' && product.price_four != null){
-                                return product.price_four
-                            }else{
-                                return 9999
-                            }
-                        }
-                    }
-                }
+                return product.price_one
             }
         },
+        priceList(price){
+            switch(price){
+                case 'Precio 1': return 'price_one' 
+                case 'Precio 2': return 'price_two' 
+                case 'Precio 3': return 'price_three' 
+                case 'Precio 4': return 'price_four' 
+            }
+        }
     },
     created(){
         this.$store.dispatch('product/getProducts', this.limit)

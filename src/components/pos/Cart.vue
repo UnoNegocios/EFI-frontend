@@ -8,8 +8,8 @@
                 <v-list-item v-for="(item,index) in StoreCart" :key="index" style="border-bottom:1px solid #e0e0e0; margin-left:5px">
                     <v-list-item-content style="padding-top: 10px!important;">
                         <div style="font-size: 15px!important; font-weight:500;"> {{item.product.name}}</div>
-                        <div style="font-size: 14px!important;">c/u = {{(productPrice(item.product)*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</div>
-                        <!--div style="font-size: 14px!important;">subtotal = {{(productPrice(item.product) * item.quantity).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</div-->
+                        <div style="font-size: 14px!important;">c/u = {{(item.product.price*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</div>
+                        <!--div style="font-size: 14px!important;">subtotal = {{(item.product.price * item.quantity).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</div-->
                         <v-row class="ma-0 px-2" style="background: #ecedf3; padding-top: 4px; border-radius: 5px; margin-top: 4px!important;">
                             <v-btn style="margin-top:-4px;" class="mr-4" icon small @click="downItem(index)">
                                 <v-icon small>  mdi-minus </v-icon>
@@ -30,14 +30,14 @@
         <v-row>
             <v-col class="total pa-0">
                 <v-card tile class="pa-6">
-                    <strong>Sub-Total:</strong> {{subtotal}}
+                    <strong>Sub-Total:</strong> {{subtotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
                     <br>
-                    <strong>IVA:</strong> {{iva}}
+                    <strong>IVA:</strong> {{iva.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
                     <br>
-                    <strong>Total:</strong> {{subtotal+iva}}
+                    <strong>Total:</strong> {{((subtotal*1)+(iva*1)).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
                 </v-card>
                 <v-card tile color="primary"><!-- # d71182 -->
-                    <v-list-item link @click="dialogPago=true" dark>
+                    <v-list-item link @click="save()" dark>
                         <v-list-item-content style="color:white;"><!-- #32241c -->
                             <strong>PAGAR</strong>
                         </v-list-item-content>
@@ -48,7 +48,7 @@
 
         <!-- Dialogo ticket -->
         <v-dialog v-model="dialogTicket" max-width="350px">
-            <ticket @cerrar="cerrarTicket" v-bind:imprimir="ticket"></ticket>
+            <ticket @cerrar="cerrarTicket" v-bind:ticket="ticket"></ticket>
         </v-dialog> 
         <!-- Dialogo ticket>
         <v-dialog v-model="dialogPago" max-width="720px">
@@ -160,45 +160,22 @@ export default {
         subtotal: function(){
             var sum = 0;
             this.StoreCart.forEach(e => {
-                sum += (Number(e.quantity*this.productPrice(e.product))/1.16);
+                sum += (Number(e.quantity*e.product.price)/1.16);
             });
-            return sum.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})
+            return sum
         },
         iva: function(){
             var sum = 0;
             this.StoreCart.forEach(e => {
-                sum += (Number(e.quantity*this.productPrice(e.product)))*.16;
+                sum += (Number(e.quantity*e.product.price))*.16;
             });
-            return sum.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})
+            return sum
         },
     },
     created(){
         this.$store.dispatch('currentUser/getUser')
     },
     methods: {
-        productPrice(product){
-            if(product.price > 0 && product.price != undefined && product.price != '' && product.price != null){
-                return product.price
-            }else{
-                if(product.price_one > 0 && product.price_one != undefined && product.price_one != '' && product.price_one != null){
-                    return product.price_one
-                }else{
-                    if(product.price_two > 0 && product.price_two != undefined && product.price_two != '' && product.price_two != null){
-                        return product.price_two
-                    }else{
-                        if(product.price_three > 0 && product.price_three != undefined && product.price_three != '' && product.price_three != null){
-                            return product.price_three
-                        }else{
-                            if(product.price_four > 0 && product.price_four != undefined && product.price_four != '' && product.price_four != null){
-                                return product.price_four
-                            }else{
-                                return 9999
-                            }
-                        }
-                    }
-                }
-            }
-        },
         add(index) {
             this.ticket.methods.push({ id: '', amount: '' });
         },
@@ -216,30 +193,29 @@ export default {
         },
         save(){
             this.ticket = {
-                company_id:null,
-                user_id:'',
+                company_id:this.$store.state.cart.client.id,
+                user_id:this.currentUser.id,
                 note:'',
-                items:[{
-                    quantity:1,
-                    item:'',
-                    price:''
-                }],
+                items:this.StoreCart.map(id=>{return{
+                    quantity:id.quantity,
+                    item:id.product.id,
+                    price:id.product.price
+                }}),
                 status:'vendido',
                 bar:true,
-                subtotal:'',
-                date:'',
-                type:'',
-                iva:'',
-                total:'',
-                invoice:'',
-                created_by_user_id:'',
-                last_updated_by_user_id:'',
+                subtotal:this.subtotal,
+                iva:this.iva,
+                total:(this.subtotal*1) + (this.iva*1),
+                date:new Date().toLocaleString("sv-SE", {timeZone: "America/Monterrey"}).toString().slice(0, 10),
+                created_by_user_id:this.currentUser.id,
+                last_updated_by_user_id:this.currentUser.id,
+                id:''
             },
-            
-            //axios.post('https://bdb.unocrm.mx/api/v1/venta/guardar',Object.assign(this.ticket)).then(resp => {
-                this.ticket.valor = value;
+            console.log(this.ticket)
+            axios.post(process.env.VUE_APP_BACKEND_ROUTE + 'api/v2/sales', this.ticket).then(resp => {
+                this.ticket.id = 5635//repsonse
                 this.dialogTicket=true;
-            //})
+            })
         },
         cerrarTicket: function(params) {
             this.dialogTicket=false;
