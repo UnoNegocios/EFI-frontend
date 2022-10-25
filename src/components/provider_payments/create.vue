@@ -226,7 +226,7 @@
                         amount:0
                     }
                 })
-                return respuesta.filter(shopping=>(shopping.due*1)>0)
+                return respuesta.filter(shopping=>(shopping.due*1)>=1)
             },
         },
         created(){
