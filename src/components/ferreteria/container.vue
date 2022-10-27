@@ -131,7 +131,7 @@ export default {
         methodList:{
             get(){
                 var response = this.$store.state.payment_method.payment_methods
-                if(process.env.VUE_APP_BACKEND_ROUTE == "https://wowipes.com/"){
+                if(process.env.VUE_APP_BACKEND_ROUTE == "https://backend.ferreteriaenlinea.com/"){
                     return response.filter(method=>method.method != 'Tarjeta')
                 }else{
                     return response

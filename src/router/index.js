@@ -259,7 +259,11 @@ const routes = [
     name: 'Ferreteria',
     component: () => import('../components/ferreteria/container.vue')
   },
-
+  {
+    path: '/caja',
+    name: 'Caja',
+    component: () => import('../components/ferreteria/caja.vue')
+  },
   {
     path: '/support',
     name: 'Soporte',

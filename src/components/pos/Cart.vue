@@ -134,7 +134,7 @@ export default {
         methodList:{
             get(){
                 var response = this.$store.state.payment_method.payment_methods
-                if(process.env.VUE_APP_BACKEND_ROUTE == "https://wowipes.com/"){
+                if(process.env.VUE_APP_BACKEND_ROUTE == "https://backend.ferreteriaenlinea.com/"){
                     return response.filter(method=>method.method != 'Tarjeta')
                 }else{
                     return response
@@ -213,7 +213,8 @@ export default {
             },
             console.log(this.ticket)
             axios.post(process.env.VUE_APP_BACKEND_ROUTE + 'api/v2/sales', this.ticket).then(resp => {
-                this.ticket.id = 5635//repsonse
+                console.log(reponse)
+                this.ticket.id = reponse.data.id//repsonse
                 this.dialogTicket=true;
             })
         },
