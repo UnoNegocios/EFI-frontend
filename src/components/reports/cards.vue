@@ -113,7 +113,7 @@
 
             <v-row class="ma-0">
                 <v-col md="4" sm="6" class="px-2">
-                    <v-card class="py-2 px-4 elevation-0" disabled>
+                    <v-card class="py-2 px-4 elevation-0">
                         <v-icon x-small color="#ea4435" class="mr-1">mdi-circle</v-icon> 
                         <span style="font-size:12px;"><strong>Costo</strong></span>
                         <br/><span>{{inventory_totals.total_inventory_cost}}</span>
@@ -121,7 +121,7 @@
                     </v-card>
                 </v-col>
                 <v-col md="4" sm="6" class="px-2">
-                    <v-card class="py-2 px-4 elevation-0" disabled>
+                    <v-card class="py-2 px-4 elevation-0">
                         <v-icon x-small color="#47bdc6" class="mr-1">mdi-circle</v-icon> 
                         <span style="font-size:12px;"><strong>Kilos</strong></span>
                         <br/><span>{{inventory_totals.total_inventory}}</span>
