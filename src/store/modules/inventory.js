@@ -11,7 +11,8 @@ const actions = {
         .then(response => {
             commit('setInventories', response.data);
         });
-    }
+    },
+    
 };
 
 const mutations = {

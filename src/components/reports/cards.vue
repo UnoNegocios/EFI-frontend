@@ -113,7 +113,14 @@
 
             <v-row class="ma-0">
                 <v-col md="4" sm="6" class="px-2">
-                    <v-card class="py-2 px-4 elevation-0">
+                    <v-card class="py-4 px-4 elevation-0" v-if="inventory_loader">
+                        <v-progress-circular
+                            indeterminate
+                            color="primary"
+                            class="ma-0"
+                        ></v-progress-circular>
+                    </v-card>
+                    <v-card class="py-2 px-4 elevation-0" v-else>
                         <v-icon x-small color="#ea4435" class="mr-1">mdi-circle</v-icon> 
                         <span style="font-size:12px;"><strong>Costo</strong></span>
                         <br/><span>{{inventory_totals.total_inventory_cost}}</span>
@@ -121,7 +128,14 @@
                     </v-card>
                 </v-col>
                 <v-col md="4" sm="6" class="px-2">
-                    <v-card class="py-2 px-4 elevation-0">
+                    <v-card class="py-4 px-4 elevation-0" v-if="inventory_loader">
+                        <v-progress-circular
+                            indeterminate
+                            color="primary"
+                            class="ma-0"
+                        ></v-progress-circular>
+                    </v-card>
+                    <v-card class="py-2 px-4 elevation-0" v-else>
                         <v-icon x-small color="#47bdc6" class="mr-1">mdi-circle</v-icon> 
                         <span style="font-size:12px;"><strong>Kilos</strong></span>
                         <br/><span>{{inventory_totals.total_inventory}}</span>
@@ -316,6 +330,9 @@ export default {
         },
         inventory_totals(){
             return this.$store.state.item.reports
+        },
+        inventory_loader(){
+            return this.$store.state.item.loader
         },
         shopping_totals(){
             return this.$store.state.shopping.reports
