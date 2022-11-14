@@ -318,7 +318,7 @@ import axios from "axios";
                 if(quantities[i].type == 'Salida Producción' || quantities[i].type == 'Salida Venta' || quantities[i].type == 'Devolución'){
                     sum = sum - quantities[i].quantity
                 }
-                else if(quantities[i].type == 'Entrada Producción' || quantities[i].type == 'Entrada Compra' || quantities[i].type == 'Ajuste Manual' || quantities[i].type == 'Creación de Producto' || quantities[i].type == 'Ajuste Inventario Físico'){
+                else if(quantities[i].type == 'Entrada Producción' || quantities[i].type == 'Entrada Compra' || quantities[i].type == 'Ajuste Manual' || quantities[i].type == 'Creación de Producto' || quantities[i].type == 'Ajuste Inventario Físico' || quantities[i].type == 'Corte Ceros'){
                     sum = sum + quantities[i].quantity
                 }
             }

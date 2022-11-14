@@ -203,7 +203,7 @@ export default {
                 if(quantities[i].type == 'Salida Producción' || quantities[i].type == 'Salida Venta' || quantities[i].type == 'Devolución'){
                     sum = sum - quantities[i].quantity
                 }
-                else if(quantities[i].type == 'Entrada Producción' || quantities[i].type == 'Entrada Compra' || quantities[i].type == 'Ajuste Manual' || quantities[i].type == 'Creación de Producto' || quantities[i].type == 'Ajuste Inventario Físico' || quantities[i].type == 'Ajuste Inventario Físico'){
+                else if(quantities[i].type == 'Entrada Producción' || quantities[i].type == 'Entrada Compra' || quantities[i].type == 'Ajuste Manual' || quantities[i].type == 'Creación de Producto' || quantities[i].type == 'Ajuste Inventario Físico' || quantities[i].type == 'Corte Ceros' || quantities[i].type == 'Ajuste Inventario Físico' || quantities[i].type == 'Corte Ceros'){
                     sum = sum + quantities[i].quantity
                 }
             }
@@ -212,7 +212,7 @@ export default {
         save(){
             var cretaeInventory = []
             for(var i=0; i<this.itemsList.length; i++){
-                if(this.itemsList[i].inventory!=''){//&& this.itemsList[i].inventory != this.itemsList2[i].inventory
+                if(this.itemsList[i].inventory!==''){//&& this.itemsList[i].inventory != this.itemsList2[i].inventory
                     let inventario = {
                         created_by_user_id: this.currentUser.id,
                         type: 'Ajuste Inventario Físico',
@@ -223,6 +223,7 @@ export default {
                     cretaeInventory = cretaeInventory.concat(inventario)
                 }
             }
+            console.log(cretaeInventory)
             if(cretaeInventory.length>0){
                 this.editedItem = cretaeInventory
                 this.cretaeInventory = cretaeInventory.map(id=>{

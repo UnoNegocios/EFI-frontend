@@ -215,6 +215,16 @@
                             </v-icon>
                             Imprimir ticket
                         </v-list-item>
+
+                        <v-list-item @click="rejection(item)">
+                            <v-list-item class="px-0">
+                                <v-icon small class="mr-2">
+                                    mdi-close
+                                </v-icon>
+                                Cancelar
+                            </v-list-item>
+                        </v-list-item>
+
                     </v-list>
                 </v-menu>
             </template>
@@ -277,6 +287,9 @@
                                             <v-icon class="mr-4">mdi-map-marker-outline</v-icon>
                                             <span>{{item.delivery_address}}</span>
                                         </a>
+
+                                        
+
                                     </v-container>
                                 </template> 
                                 <template v-slot:[`item.item`]="{ item }">
@@ -396,16 +409,9 @@
                                             </v-list-item>
 
                                             
-                                            <v-list-item @click="rejection(item)">
-                                                <v-list-item class="px-0">
-                                                    <v-icon small class="mr-2">
-                                                        mdi-close
-                                                    </v-icon>
-                                                    Cancelar
-                                                </v-list-item>
-                                            </v-list-item>
+                                            
 
-                                            <v-btn outlined rounded color="red" class="mt-4"  style="font-size:12px; height:30px!important; margin-left: auto; margin-right: auto; display: block;">Cancelar</v-btn>
+                                            <!--v-btn outlined rounded color="red" class="mt-4"  style="font-size:12px; height:30px!important; margin-left: auto; margin-right: auto; display: block;">Cancelar</v-btn-->
                                         </v-list>
                                     </v-menu>
                                 </template>
