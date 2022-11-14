@@ -237,7 +237,7 @@ export default {
                 date = [this.today,this.tomorrow]
             }
             this.render = false
-            axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/orders/dispatched_orders?filter[date_between]="+date).then(response => {
+            axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/orders/dispatched_orders?filter[date_between]="+date+"&itemsPerPage=500").then(response => {
                 this.monterreySales = response.data.data.filter(data=>this.lowerCase(data.company.attributes.delivery_address).includes('monterrey') || this.lowerCase(data.company.attributes.delivery_address).includes('mty'))
                 this.guadalupeSales = response.data.data.filter(data=>this.lowerCase(data.company.attributes.delivery_address).includes('guadalupe') || this.lowerCase(data.company.attributes.delivery_address).includes('gpe'))
                 this.sannicolasSales = response.data.data.filter(data=>this.lowerCase(data.company.attributes.delivery_address).includes('san nicolas') || this.lowerCase(data.company.attributes.delivery_address).includes('san nicolás'))
