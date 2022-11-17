@@ -1,5 +1,6 @@
 <template>
     <v-container class="ma-0 pa-0 pb-8">
+
         <div class="pt-6 px-8 pb-6">
             <v-row class="ma-0 mb-2">
                 <strong>Filtros</strong>
@@ -12,7 +13,7 @@
                 </v-btn>
             </v-row>
 
-            <v-autocomplete @keydown.enter="filter()" v-model="quotation.company_id" :items="companyLists" :loading="isLoadingCompany" :search-input.sync="searchCompanies" hide-no-data item-value="id" item-text="name" label="Empresa(s)" placeholder="Escribe para buscar" attach chips multiple>
+            <v-autocomplete @keydown.enter="filter()" v-model="quotation.company_id" :items="companyLists" :loading="isLoadingCompany" :search-input.sync="searchCompanies" hide-no-data item-value="id" item-text="name_razon_social" label="Empresa(s)" placeholder="Escribe para buscar" attach chips multiple>
                 <template v-slot:item="{item, attrs, on}">
                     <v-list-item v-on="on" v-bind="attrs">
                         <v-list-item-content>
@@ -165,7 +166,7 @@ export default {
             //if (this.companyLists.length > 0) return
             if (this.isLoadingCompany) return
             this.isLoadingCompany = true
-            axios.get(process.env.VUE_APP_BACKEND_ROUTE + 'api/v2/company_p?filter[name]='+val)
+            axios.get(process.env.VUE_APP_BACKEND_ROUTE + 'api/v2/companies?filter[name_razon_social]='+val)
             .then(res => {
                 this.entries.companies = res.data.data
             }).finally(() => (this.isLoadingCompany = false))
@@ -200,9 +201,10 @@ export default {
             return this.entries.companies.map(id => {
                 return{
                     id:id.id,
-                    macro:id.macro,
-                    name:id.name,
-                    razon_social:id.razon_social
+                    macro:id.attributes.macro,
+                    name:id.attributes.name,
+                    razon_social:id.attributes.razon_social,
+                    name_razon_social: id.attributes.name + ' | ' + id.attributes.razon_social,
                 }
             })
         },
