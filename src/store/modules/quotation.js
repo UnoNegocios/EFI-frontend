@@ -97,7 +97,7 @@ const actions = {
             axios
             .get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/sale/totals?"+ JSON.parse(localStorage.getItem('filtersSales')))
             .then(response1=>{
-                axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/due_balance?"+ JSON.parse(localStorage.getItem('filtersSales')))
+                axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/due_balance?"+ JSON.parse(localStorage.getItem('filtersSales2')))
                 .then(response2 => {
                     commit('setTotals', Object.assign(response1.data, response2.data));
                 });

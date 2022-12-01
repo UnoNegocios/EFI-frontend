@@ -248,94 +248,119 @@ export default {
         filter(){
             var count = 0
             var filter = ''
+            var filter2 = ''
             //abierto
             if(this.quotation.id!=''){
                 count = count+1
                 filter = filter + '&filter[id]='+this.quotation.id
+                filter2 = filter2 + '&filter[id]='+this.quotation.id
             }
             if(this.quotation.note!=''){
                 count = count+1
                 filter = filter + '&filter[note]='+this.quotation.note
+                filter2 = filter2 + '&filter[note]='+this.quotation.note
             }
             if(this.quotation.invoice!=''){
                 count = count+1
                 filter = filter + '&filter[invoice]='+this.quotation.invoice
+                filter2 = filter2 + '&filter[invoice]='+this.quotation.invoice
             }
             //multiples
             if(this.quotation.payment_status!=undefined && this.quotation.payment_status.length>0){
                 count = count+1
                 filter = filter + '&filter[payment_status]='
+                filter2 = filter2 + '&filter[payment_status]='
                 var length = this.quotation.payment_status.length
                 for(var i=0; i<length; i++){
                     filter = filter + this.quotation.payment_status[i]
+                    filter2 = filter2 + this.quotation.payment_status[i]
                     if(length>1 && i<length-1){
                         filter = filter + ','
+                        filter2 = filter2 + ','
                     }
                 }
             }
             if(this.quotation.company_id!=undefined && this.quotation.company_id.length>0){
                 count = count+1
                 filter = filter + '&filter[company_id]='
+                filter2 = filter2 + '&filter[company_id]='
                 var length = this.quotation.company_id.length
                 for(var i=0; i<length; i++){
                     filter = filter + this.quotation.company_id[i]
+                    filter2 = filter2 + this.quotation.company_id[i]
                     if(length>1 && i<length-1){
                         filter = filter + ','
+                        filter2 = filter2 + ','
                     }
                 }
             }
             if(this.quotation.contact_id!=undefined && this.quotation.contact_id.length>0){
                 count = count+1
                 filter = filter + '&filter[contact_id]='
+                filter2 = filter2 + '&filter[contact_id]='
                 var length = this.quotation.contact_id.length
                 for(var i=0; i<length; i++){
                     filter = filter + this.quotation.contact_id[i]
+                    filter2 = filter2 + this.quotation.contact_id[i]
                     if(length>1 && i<length-1){
                         filter = filter + ','
+                        filter2 = filter2 + ','
                     }
                 }
             }
             if(this.quotation.created_by_user_id!=undefined && this.quotation.created_by_user_id.length>0){
                 count = count+1
                 filter = filter + '&filter[created_by_user_id]='
+                filter2 = filter2 + '&filter[created_by_user_id]='
                 var length = this.quotation.created_by_user_id.length
                 for(var i=0; i<length; i++){
                     filter = filter + this.quotation.created_by_user_id[i]
+                    filter2 = filter2 + this.quotation.created_by_user_id[i]
                     if(length>1 && i<length-1){
                         filter = filter + ','
+                        filter2 = filter2 + ','
                     }
                 }
             }
             if(this.quotation.last_updated_by_user_id!=undefined && this.quotation.last_updated_by_user_id.length>0){
                 count = count+1
                 filter = filter + '&filter[last_updated_by_user_id]='
+                filter2 = filter2 + '&filter[last_updated_by_user_id]='
                 var length = this.quotation.last_updated_by_user_id.length
                 for(var i=0; i<length; i++){
                     filter = filter + this.quotation.last_updated_by_user_id[i]
+                    filter2 = filter2 + this.quotation.last_updated_by_user_id[i]
                     if(length>1 && i<length-1){
                         filter = filter + ','
+                        filter2 = filter2 + ','
                     }
                 }
             }
             if(this.quotation.user_id!=undefined && this.quotation.user_id.length>0){
                 count = count+1
                 filter = filter + '&filter[user_id]='
+                filter2 = filter2 + '&filter[user_id]='
                 var length = this.quotation.user_id.length
                 for(var i=0; i<length; i++){
                     filter = filter + this.quotation.user_id[i]
+                    filter2 = filter2 + this.quotation.user_id[i]
                     if(length>1 && i<length-1){
                         filter = filter + ','
+                        filter2 = filter2 + ','
                     }
                 }
             }
             if(this.quotation.sales_man!=undefined && this.quotation.sales_man.length>0){
                 count = count+1
                 filter = filter + '&filter[company.user_id]='
+                filter2 = filter2 + '&filter[company.user_id]='
                 var length = this.quotation.sales_man.length
                 for(var i=0; i<length; i++){
                     filter = filter + this.quotation.sales_man[i]
+                    filter2 = filter2 + this.quotation.sales_man[i]
                     if(length>1 && i<length-1){
                         filter = filter + ','
+                        filter2 = filter2 + ','
                     }
                 }
             }
@@ -343,22 +368,27 @@ export default {
             if(this.quotation.type!=''){
                 count = count+1
                 filter = filter + '&filter[type]='+this.quotation.type
+                filter2 = filter2 + '&filter[type]='+this.quotation.type
             }
             if(this.quotation.printed!==''){
                 count = count+1
                 filter = filter + '&filter[printed]='+this.quotation.printed
+                filter2 = filter2 + '&filter[printed]='+this.quotation.printed
             }
             if(this.quotation.production_dispatched!==''){
                 count = count+1
                 filter = filter + '&filter[production_dispatched]='+this.quotation.production_dispatched
+                filter2 = filter2 + '&filter[production_dispatched]='+this.quotation.production_dispatched
             }
             if(this.quotation.bar!==''){
                 count = count+1
                 filter = filter + '&filter[bar]='+this.quotation.bar
+                filter2 = filter2 + '&filter[bar]='+this.quotation.bar
             }
             if(this.quotation.status!==''){
                 count = count+1
                 filter = filter + '&filter[status]='+this.quotation.status
+                filter2 = filter2 + '&filter[status]='+this.quotation.status
             }
             //date
             if(this.quotation.date!=undefined && this.quotation.date.length==2){
@@ -376,6 +406,7 @@ export default {
             localStorage.setItem('selectorFiltersSales', JSON.stringify(this.quotation));
             localStorage.setItem('entriesFiltersSales', JSON.stringify(this.entries));
             localStorage.setItem('filtersSales', JSON.stringify(filter.slice(1,filter.length)));
+            localStorage.setItem('filtersSales2', JSON.stringify(filter2.slice(1,filter2.length)));
             localStorage.setItem('filtersSalesLength', count)
 
             this.$nextTick(() => {
@@ -418,6 +449,7 @@ export default {
             },
             localStorage.removeItem("selectorFiltersSales")
             localStorage.removeItem("filtersSales")
+            localStorage.removeItem("filtersSales2")
             localStorage.removeItem("entriesFiltersSales")
             localStorage.removeItem("filtersSalesLength")
             this.$nextTick(() => {
