@@ -87,19 +87,22 @@ const actions = {
         if(localStorage.getItem('filtersSales')==undefined&&localStorage.getItem('filtersSales')==null){
             axios
             .get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/sale/totals"+'?filter[date_between]='+startDate)
-            .then(response => {
-                state.total_loader = false
-                commit('setTotals', response.data);
+            .then(response1 => {
+                axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/due_balance")
+                .then(response2 => {
+                    commit('setTotals', Object.assign(response1.data, response2.data));
+                });
             });
         }else{
             axios
             .get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/sale/totals?"+ JSON.parse(localStorage.getItem('filtersSales')))
-            .then(response=>{
-                state.total_loader = false
-                commit('setTotals', response.data);
+            .then(response1=>{
+                axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/due_balance?"+ JSON.parse(localStorage.getItem('filtersSales')))
+                .then(response2 => {
+                    commit('setTotals', Object.assign(response1.data, response2.data));
+                });
             })
         }
-        //})
     },
     getQuotationItems( {commit} ){
         axios
@@ -125,9 +128,11 @@ const actions = {
     },
     getReports( {commit}, dates ){
         axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/sale/totals"+'?filter[date_between]='+dates)
-        .then(response => {
-            state.total_loader = false
-            commit('setReports', response.data);
+        .then(response1 => {
+            axios.get(process.env.VUE_APP_BACKEND_ROUTE + "api/v2/due_balance")
+            .then(response2 => {
+                commit('setReports', Object.assign(response1.data, response2.data));
+            });
         });
     },
 };
@@ -153,9 +158,11 @@ const mutations = {
     },
     setTotals(state, data){
         state.totals = data;
+        state.total_loader = false;
     },
     setReports(state, data){
         state.reports = data;
+        state.total_loader = false;
     },
     setQuoationItems(state, data){
         state.quotation_items = data;

@@ -60,7 +60,7 @@
                         <v-icon x-small color="#ea4435" class="mr-1">mdi-circle</v-icon> 
                         <span style="font-size:12px;"><strong>Cobranza Vencida</strong></span>
                         <br/>{{(totals.sum_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                        <!--br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span-->
+                        <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
                     </v-card>
                 </v-col>
                 <v-col md="4" sm="6" class="px-2">
@@ -83,8 +83,8 @@
                     <v-card class="py-2 px-4 elevation-0">
                         <v-icon x-small color="#ea4435" class="mr-1">mdi-circle</v-icon> 
                         <span style="font-size:12px;"><strong>En Credito</strong></span>
-                        <br/>{{(totals.sum_credito*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
-                        <!--br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_past_due_balance*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span-->
+                        <br/>{{(totals.sum_credit*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
+                        <br/><span style="font-size:12px; color:grey;">Promedio:<strong>{{(totals.avg_credit*1).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}</strong></span>
                     </v-card>
                 </v-col>
             </v-row>
@@ -313,8 +313,6 @@ export default {
         this.$store.dispatch('quotation/getReports', date_between)
         this.$store.dispatch('collection/getReports', date_between)
         this.$store.dispatch('payroll/getReports', date_between)
-        //this.$store.dispatch('items/getReports', date_between)
-        //this.$store.dispatch('shopping/getReports', date_between)
         this.$store.dispatch('expense/getReports', date_between)
         this.$store.dispatch('shipping/getReports', date_between)
     },
