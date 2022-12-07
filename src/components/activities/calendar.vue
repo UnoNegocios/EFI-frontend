@@ -274,6 +274,12 @@
       updateRange ({ start, end }) {
         this.start = start.date
         this.end = end.date
+        if(this.start==undefined){
+          this.start = new Date().toLocaleString("sv-SE", {timeZone: "America/Monterrey"}).slice(0,10)
+        }
+        if(this.end==undefined){
+          this.end = new Date().toLocaleString("sv-SE", {timeZone: "America/Monterrey"}).slice(0,16)
+        }
         var link = process.env.VUE_APP_BACKEND_ROUTE + "api/v2/calendars?filter[date_between]=" + this.start + ',' + this.end
         if(this.currentUser.id!=1&&this.currentUser.id!=6){
           link = link + "&filter[user_id]="+this.currentUser.id

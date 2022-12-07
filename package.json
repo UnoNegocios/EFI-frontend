@@ -1,6 +1,6 @@
 {
   "name": "UNOCRM",
-  "version": "4.1.66",
+  "version": "4.1.67",
   "private": true,
   "scripts": {
     "serve": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service  serve",
