@@ -91,9 +91,13 @@
                     total: (id.unit_cost*id.quantity).toLocaleString('es-MX', { style: 'currency', currency: 'MXN',}),
                     editedItem: [id].map(p=>{
                         return{
+                            id:p.id,
                             item_id: p.item.id*1,
                             quantity: p.quantity,
-                            unit_cost: p.unit_cost
+                            unit_cost: p.unit_cost,
+                            shopping_id: id.shopping_id,
+                            merma:0,
+                            created_by_user_id: id.created_by_user_id
                         }
                     })[0]
                 }

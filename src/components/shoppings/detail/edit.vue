@@ -79,6 +79,7 @@ import axios from "axios";
         close () {
             this.gris = false
             this.$nextTick(() => {
+                this.$store.dispatch('shopping_detail/getShoppingDetails')
                 this.$emit("closeDialogEditShopping", false);
             })
         },
@@ -86,6 +87,7 @@ import axios from "axios";
             this.gris = true
             this.shoppingOrder.last_updated_by_user_id=this.currentUser.id;
             axios.put(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/shopping_detail/update",Object.assign(this.shoppingOrder)).then(response=>{
+                this.$store.dispatch('shopping_detail/getShoppingDetails')
                 this.close()
             }).catch(error => {
                 this.snackbar = {

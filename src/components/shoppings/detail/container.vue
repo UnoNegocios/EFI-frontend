@@ -87,9 +87,13 @@
                     updated_at: id.updated_at.slice(0, 10),
                     editedItem: [id].map(p=>{
                         return{
+                            id:p.id,
                             item_id: p.item_id,
                             quantity: p.quantity,
-                            unit_cost: p.unit_cost
+                            unit_cost: p.unit_cost,
+                            shopping_id: id.shopping_id,
+                            merma:0,
+                            created_by_user_id: id.created_by_user_id
                         }
                     })[0]
                 }
