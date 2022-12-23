@@ -13,6 +13,8 @@
                 </v-btn>
             </v-row>
 
+            <v-text-field @keydown.enter="filter()" label="Folio" v-model="quotation.id"></v-text-field>
+            
             <v-autocomplete @keydown.enter="filter()" v-model="quotation.company_id" :items="companyLists" :loading="isLoadingCompany" :search-input.sync="searchCompanies" hide-no-data item-value="id" item-text="name_razon_social" label="Empresa(s)" placeholder="Escribe para buscar" attach chips multiple>
                 <template v-slot:item="{item, attrs, on}">
                     <v-list-item v-on="on" v-bind="attrs">
@@ -94,7 +96,7 @@
 
             <v-select @keydown.enter="filter()" label="Estatus" v-model="quotation.status" :items="statuses"></v-select>
 
-            <v-text-field @keydown.enter="filter()" label="Folio" v-model="quotation.id"></v-text-field>
+            
             <v-text-field @keydown.enter="filter()" label="Nota" v-model="quotation.note"></v-text-field>
             <v-text-field @keydown.enter="filter()" label="Factura/Remisión" v-model="quotation.invoice"></v-text-field>
 
