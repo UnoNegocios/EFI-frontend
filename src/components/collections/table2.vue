@@ -168,6 +168,10 @@
         <v-snackbar :color="snackbar.color" v-model="snackbar.show">
             {{ snackbar.message }}
         </v-snackbar>
+
+        <v-dialog v-model="filterMobile" fullscreen hide-overlay transition="dialog-bottom-transition">
+            <filterCollections style="background:white;" v-bind:company="company" @filtersCollection="filtefiltersCollectionrsSale"/>
+        </v-dialog>
     </v-container>
 </template>
 
@@ -190,6 +194,7 @@ export default {
         'totals':Totals
     }, 
     data: () => ({
+        filterMobile:false,
         complemento:'',
         filterStorageLength:0,
         showTable:true,
@@ -476,12 +481,16 @@ export default {
 
         },
         openFilter(){
-            if(this.filters == false){
-                this.$emit("closeDrawer", false);
-                this.filters = true
+            if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                this.filterMobile = true
             }else{
-                this.$emit("closeDrawer", true);
-                this.filters = false
+                if(this.filters == false){
+                    this.$emit("closeDrawer", false);
+                    this.filters = true
+                }else{
+                    this.$emit("closeDrawer", true);
+                    this.filters = false
+                }
             }
         },
         permissions(permission){
@@ -500,6 +509,7 @@ export default {
         filtersCollection: function(params) {
             this.$store.dispatch('collection/getNewCollections', {'pageNumber':1, 'sort':'id'})
             this.showTable = false
+            this.filterMobile = false
             this.$nextTick(() => {
                 this.showTable = true
             })

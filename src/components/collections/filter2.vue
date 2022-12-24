@@ -1,11 +1,14 @@
 <template>
     <v-container class="ma-0 pa-0 pb-8">
-        <v-row class="pt-10 px-8 pb-12">
-            <v-row class="ma-0 mb-4">
+        <div class="py-6 pl-8 pr-12">
+            <v-row class="ma-0 mb-2">
                 <strong>Filtros</strong>
                 <v-spacer></v-spacer>
                 <v-btn @click="removeFilter()" small class="elevation-0" style="border:solid 1px #dddddd;">
                     <v-icon small class="mr-1">mdi-filter-off</v-icon>Limpiar
+                </v-btn>
+                <v-btn class="hidden-md-and-up elevation-0 ml-4" @click="close()" small>
+                    <v-icon class="mr-1">mdi-close</v-icon>
                 </v-btn>
             </v-row>
 
@@ -88,8 +91,15 @@
                 <v-date-picker v-model="collection.updated_at" range></v-date-picker>
             </v-menu>
 
-        </v-row>
-        <v-card style="position:absolute; bottom:0; width:100%;" tile color="primary">
+        </div>
+        <v-card style="margin-bottom:100px; width:100%;" class="hidden-md-and-up" tile color="primary">
+            <v-list-item link @click="filter()" dark>
+                <v-list-item-content>
+                    <strong>Filtrar (0)</strong>
+                </v-list-item-content>
+            </v-list-item>    
+        </v-card>
+        <v-card style="position:absolute; bottom:0; width:100%;" class="hidden-sm-and-down" tile color="primary">
             <v-list-item link @click="filter()" dark>
                 <v-list-item-content>
                     <strong>Filtrar (0)</strong>
