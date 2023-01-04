@@ -315,6 +315,23 @@
                   <span>Remisiones y Facturas MACRO</span>
                 </v-tooltip>
                 </div>
+
+                <!-- cancelaciones -->
+                <div>
+                <v-tooltip right open-delay="1000">
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-list-item to="/caja" link v-bind="attrs" v-on="on">
+                      <v-list-item-action class="mr-3">
+                        <v-icon>mdi-cash-register</v-icon>
+                      </v-list-item-action>
+                      <v-list-item-content>
+                        <v-list-item-title>Caja</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+                    </template>
+                  <span>Pedidos del Punto de Venta</span>
+                </v-tooltip>
+                </div>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -775,7 +792,7 @@
       </v-list>
       <template v-slot:append>
         <div style="color:#9ca3a5; font-size: 12px;" class="pa-2">
-          UNOCRM | v4.1.70 <v-icon> mdi-settings</v-icon>
+          UNOCRM | v4.1.72 <v-icon> mdi-settings</v-icon>
         </div>
       </template>
     </v-navigation-drawer>

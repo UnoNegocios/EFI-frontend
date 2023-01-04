@@ -6,7 +6,7 @@
         </v-navigation-drawer>
 
         <v-row class="ma-0 pa-4">
-            <v-autocomplete @keydown.enter="filter()" v-model="client_id" :items="companyLists" :loading="isLoadingCompany" :search-input.sync="searchCompanies" hide-no-data item-value="id" item-text="name" label="Empresa(s)" placeholder="Escribe para buscar" attach>
+            <v-autocomplete @keydown.enter="filter()" v-model="client_id" :items="companyLists" :loading="isLoadingCompany" :search-input.sync="searchCompanies" hide-no-data item-value="id" item-text="name" label="Cliente" placeholder="Escribe para buscar" attach>
                 <template v-slot:item="{item, attrs, on}">
                     <v-list-item v-on="on" v-bind="attrs">
                         <v-list-item-content>
@@ -29,7 +29,7 @@
 
         <v-row justify="center" class="ma-0">
             <v-col class="my-4 mx-0" v-for="(product,k) in products" :key="k" cols="4">
-                <v-card :disabled="!(product.price!=undefined || product.price>0)" @click="addToCart(product)"><!--:disabled="product.inventory>0"-->
+                <v-card :disabled="!(product.price!=undefined && product.price>0)" @click="addToCart(product)"><!--:disabled="product.inventory>0"-->
                     <!--v-img height="150px" width="19vw" v-bind:src="liga + 'files/' + product.image"></v-img-->
                     <v-card-subtitle class="pb-0">SKU:{{product.code_one}} | {{product.name}}</v-card-subtitle>
                     <v-card-text class="text--primary">
@@ -93,16 +93,13 @@ export default {
                     id:id.id,
                     name:id.name,
                     price:this.productPrice(id),
-                    //unit:id.unit.name,
+                    cost:id.cost,
                     code_one:id.code_one
                 }
             })
         },
         client(){
-            console.log('perro')
-            var perro = this.$store.state.cart.client
-            console.log(perro)
-            return perro
+            return this.$store.state.cart.client
         }
     },
     methods:{
@@ -113,16 +110,17 @@ export default {
             this.$store.dispatch("cart/addItem", id);
         },
         productPrice(product){
+            console.log(product)
             if(this.client_id!=''){
                 var price = this.priceList(this.companyLists.filter(company=>company.id == this.client_id)[0].price_list.name)
                 return product[price]*1
             }else{
-                return product.price_one
+                return product.price
             }
         },
         priceList(price){
             switch(price){
-                case 'Precio 1': return 'price_one' 
+                case 'Precio 1': return 'price' 
                 case 'Precio 2': return 'price_two' 
                 case 'Precio 3': return 'price_three' 
                 case 'Precio 4': return 'price_four' 

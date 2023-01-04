@@ -418,9 +418,12 @@ export default {
             },
             this.$nextTick(() => {
                 this.$store.dispatch('collection/getTotals')
-                this.$emit("filtersCollection", false);
+                this.$emit("filtersCollection", true);
             })
-        }
+        },
+        close(){
+            this.$emit("filtersCollection", false);
+        },
     }
   }
 </script>

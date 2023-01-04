@@ -170,7 +170,7 @@
         </v-snackbar>
 
         <v-dialog v-model="filterMobile" fullscreen hide-overlay transition="dialog-bottom-transition">
-            <filterCollections style="background:white;" v-bind:company="company" @filtersCollection="filtefiltersCollectionrsSale"/>
+            <filterCollections style="background:white;" v-bind:company="company" @filtersCollection="filtersCollection"/>
         </v-dialog>
     </v-container>
 </template>
@@ -509,7 +509,7 @@ export default {
         filtersCollection: function(params) {
             this.$store.dispatch('collection/getNewCollections', {'pageNumber':1, 'sort':'id'})
             this.showTable = false
-            this.filterMobile = false
+            this.filterMobile = params
             this.$nextTick(() => {
                 this.showTable = true
             })

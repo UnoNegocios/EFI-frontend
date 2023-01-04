@@ -29,7 +29,8 @@
         </v-row>
         <v-row>
             <v-col class="total pa-0">
-                <v-card tile class="pa-6">
+                <v-card tile class="pa-6 pt-2">
+                    <v-switch v-model="ticket.type" inset label="Factura" ></v-switch>
                     <strong>Sub-Total:</strong> {{subtotal.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
                     <br>
                     <strong>IVA:</strong> {{iva.toLocaleString('es-MX', { style: 'currency', currency: 'MXN',})}}
@@ -50,44 +51,6 @@
         <v-dialog v-model="dialogTicket" max-width="350px">
             <ticket @cerrar="cerrarTicket" v-bind:ticket="ticket"></ticket>
         </v-dialog> 
-        <!-- Dialogo ticket>
-        <v-dialog v-model="dialogPago" max-width="720px">
-            <v-card>
-              <v-card-title>
-                <span class="headline">Metodo de Pago</span>
-              </v-card-title>
-              <v-card-text>
-                <v-container>
-                  <v-row>
-                    <v-row class="form-group px-6 py-2" v-for="(method,k) in ticket.methods" :key="k">
-                        <v-col cols="5" class="py-0 my-0">
-                            <v-select :items="methodList" v-model="method.id" item-value="id" item-text="method" label="Metodo de pago"></v-select>
-                        </v-col>
-                        <v-col cols="4" class="py-0 my-0">
-                            <v-text-field v-model="method.amount" prefix="$" suffix="c/u" label="Monto"></v-text-field>
-                        </v-col>
-                        <v-col cols="2">
-                            <v-icon @click="remove(k)" v-show="k || ( !k && ticket.methods.length > 1)" color="red">mdi-close</v-icon>
-                            <v-icon @click="add(k)" v-show="k == ticket.methods.length-1" color="primary">mdi-plus</v-icon>
-                        </v-col>
-                    </v-row>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-
-              <v-card-actions>
-                <v-menu v-model="menu3" v-if="currentUser.id == 10 || currentUser.id == 1 || currentUser.id == 9" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px" >
-                    <template v-slot:activator="{ on }">
-                    <v-text-field clearable required v-model="ticket.fecha_de_creacion" label="Fecha de venta" prepend-icon="event" readonly v-on="on"></v-text-field>
-                    </template>
-                    <v-date-picker color="primary" v-model="ticket.fecha_de_creacion" @input="menu3 = false"></v-date-picker>
-                </v-menu>
-                  <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" @click="cerrarTicket()" text>Cancelar</v-btn>
-                  <v-btn color="blue darken-1" @click="save()" text>Guardar</v-btn>
-              </v-card-actions>
-            </v-card>
-        </v-dialog--> 
     </v-container>
 </template>
 
@@ -167,7 +130,7 @@ export default {
         iva: function(){
             var sum = 0;
             this.StoreCart.forEach(e => {
-                sum += (Number(e.quantity*e.product.price))*.16;
+                sum += ((Number(e.quantity*e.product.price))/1.16)*.16;
             });
             return sum
         },
@@ -192,6 +155,12 @@ export default {
             this.$store.dispatch('cart/upItem', {'id':id, 'index':index});
         },
         save(){
+            var serie = ''
+            if(this.ticket.type){
+                serie = 'Serie A'
+            }else{
+                serie = 'Serie B'
+            }
             this.ticket = {
                 company_id:this.$store.state.cart.client.id,
                 user_id:this.currentUser.id,
@@ -199,7 +168,9 @@ export default {
                 items:this.StoreCart.map(id=>{return{
                     quantity:id.quantity,
                     item:id.product.id,
-                    price:id.product.price
+                    price:id.product.price,
+                    cost:id.product.cost,
+                    value:id.product.price,
                 }}),
                 status:'vendido',
                 bar:true,
@@ -209,12 +180,12 @@ export default {
                 date:new Date().toLocaleString("sv-SE", {timeZone: "America/Monterrey"}).toString().slice(0, 10),
                 created_by_user_id:this.currentUser.id,
                 last_updated_by_user_id:this.currentUser.id,
-                id:''
+                id:'',
+                type:serie
             },
-            console.log(this.ticket)
-            axios.post(process.env.VUE_APP_BACKEND_ROUTE + 'api/v2/sales', this.ticket).then(resp => {
-                console.log(reponse)
-                this.ticket.id = reponse.data.id//repsonse
+            axios.post(process.env.VUE_APP_BACKEND_ROUTE + 'api/v2/sales', this.ticket).then(reponse => {
+                console.log(reponse.data)
+                this.ticket.id = reponse.data//repsonse
                 this.dialogTicket=true;
             })
         },

@@ -1,7 +1,9 @@
 <template>
     <v-container style="max-width:100vw;">
 
-        <v-card class="elevation-0 px-12 py-6">
+        <v-card class="elevation-0 px-12 py-6" style="min-height:100vh; background:white;">
+
+            <v-row class="ma-0 mb-5"><v-btn icon @click="closeDialog('close')"><v-icon x-large>mdi-chevron-left</v-icon></v-btn></v-row>
 
             <v-row>
                 <v-radio-group v-model="factura" class="mb-4">
@@ -84,6 +86,9 @@
 <script>
 import axios from "axios";
 export default {
+    props:{
+        selected_ticket:Object
+    },
     data () {
         return {
             datePicker:'',
@@ -92,7 +97,7 @@ export default {
             editedItem: {
                 serie:'',
                 macro:true,
-                date:new Date(),
+                date:new Date().toLocaleString("sv-SE", {timeZone: "America/Monterrey"}).slice(0,10),
                 payment_method_id:'',
                 amount:'',
                 invoice:'',
@@ -119,7 +124,32 @@ export default {
         }
     },
     created(){
+        this.editedItem.amount = this.selected_ticket.subtotal*1
+        this.editedItem.salesID=[this.selected_ticket]
+        if(this.selected_ticket.type == 'Serie A'){
+            this.factura = 'invoice'
+        }else if(this.selected_ticket.type == 'Serie B'){
+            this.factura = 'remission'
+        }
         this.editedItem.date = new Date().toLocaleString("sv-SE", {timeZone: "America/Monterrey"}).toString().slice(0, 10)
+    },
+    watch:{
+        selected_ticket:{
+            handler(){
+                this.editedItem.amount = this.selected_ticket.subtotal
+                this.editedItem.salesID=[this.selected_ticket].map(id=>{ return{
+                    amount: id.total,
+                    due: id.total,
+                    newDue: ((id.total*1) - (this.editedItem.amount*1)),
+                    id: id.id
+                }})
+                if(this.selected_ticket.type == 'Serie A'){
+                    this.factura = 'invoice'
+                }else if(this.selected_ticket.type == 'Serie B'){
+                    this.factura = 'remission'
+                }
+            }, deep: true
+        }
     },
     computed:{
         remissions(){
@@ -136,7 +166,6 @@ export default {
                 }else{
                     return response
                 }
-                
             }
         },
         cambio(){
@@ -156,6 +185,32 @@ export default {
         }
     },
     methods: {
+        closeDialog (ticket_id) {
+            this.editedItem = {
+                serie:'',
+                macro:true,
+                date:new Date().toLocaleString("sv-SE", {timeZone: "America/Monterrey"}).slice(0,10),
+                payment_method_id:'',
+                amount:'',
+                invoice:'',
+                note:'',
+                pdf:'',
+                created_by_user_id:'',
+                last_updated_by_user_id:'',
+                user_id:'',
+                company_id:'',
+                remission:'',
+                salesID:[],
+                methods:[{
+                    method:'',
+                    amount:'',
+                    recibido:''
+                }]
+            },
+            this.$nextTick(() => {
+                this.$emit("closeDialog", ticket_id);
+            })
+        },
         lowerCase(text){
             if(text!=null&&text!=undefined&&text!=''){
                 return text.toLowerCase()
@@ -181,7 +236,6 @@ export default {
             this.editedItem.created_by_user_id = this.currentUser.id
             this.editedItem.last_updated_by_user_id = this.currentUser.id
             this.editedItem.user_id = this.currentUser.id
-
             if(this.factura == 'invoice'){
                 this.editedItem.remission = ''
                 this.editedItem.serie = 'Serie A'
@@ -189,9 +243,6 @@ export default {
                 this.editedItem.invoice = ''
                 this.editedItem.serie = 'Serie B'
             }
-
-
-
             if(this.type == 'Venta'){
                 for(var i=0; i<this.editedItem.methods.length; i++){
                     if(this.lowerCase(this.paymentMethod(this.editedItem.methods[i].method)) == 'efectivo'){
@@ -214,11 +265,17 @@ export default {
                     this.editedItem.methods[j].amount = this.editedItem.methods[j].amount*(-1)
                 }
             }
-            
-            
+            this.editedItem.salesID = this.editedItem.salesID.map(id=>{ return{
+                amount: id.total,
+                due: id.total,
+                newDue: ((id.total*1) - (this.editedItem.amount*1)),
+                id: id.id,
+                invoice: this.editedItem.invoice,
+                invoice_date : this.editedItem.date
+            }})
             this.$nextTick(() => {
                 axios.post(process.env.VUE_APP_BACKEND_ROUTE + "api/v1/collection/create",Object.assign(this.editedItem)).then(response=>{
-                    location.reload();
+                    this.closeDialog(this.selected_ticket.id)
                 }).catch(error => {
                     this.snackbar = {
                         message: error.response.data.message,
