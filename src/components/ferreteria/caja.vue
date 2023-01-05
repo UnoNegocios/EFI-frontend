@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import Ferreteria from "../ferreteria/container"
+import Ferreteria from "../ferreteria/dialog"
 import axios from "axios"
 export default {
     components: {
